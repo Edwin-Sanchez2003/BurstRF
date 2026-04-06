@@ -1,6 +1,17 @@
 # BurstRF - 1.0
 This application is meant to be an MVP SigMF annotation editor.
 
+## TODO
+* generated half of 0.1 - need to understand properly before continuing.
+* Add in File Select button for dataset.
+* Add in code to load IQ data from dataset.
+* Add in code to generate spectrogram images from IQ data.
+* MAKE SURE TO TIE FRONTEND variables to backend rendering:
+    - flickable content height - same as total spectrogram height.
+    - image chunk width & height - same as spectrogram chunks.
+    - resizing shouldn't mess up view (image should not be scaled ever).
+    - ...others?
+
 ## 0.1 User Story
 1. Open the application.
 2. Click select file button - file dialog opens.

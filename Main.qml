@@ -74,7 +74,8 @@ ApplicationWindow {
                   NOTE: properties are live relationships - they are a constraint the engine maintains. This is built
                   with signal/slots, which is made to be an automatic observer pattern in QML for properties.
                 */
-                property int chunkIndex: Math.floor(contentY / chunkHeight)
+                property int chunkIndex: contentY > 0 ? Math.floor(
+                                                            contentY / chunkHeight) : 0
 
                 // Repeater: A virtual scrolling pool. The actual number of elements at any time is determined by
                 // the model number.
@@ -89,6 +90,8 @@ ApplicationWindow {
                         // rendered no matter what!
                         property int slot: flickable.chunkIndex - 1 + index
                         property int slotY: slot * chunkHeight
+                        property bool inBounds: slot >= 0
+                                                && (slotY + chunkHeight) <= totalHeight
 
                         x: 0
                         y: slotY
@@ -113,8 +116,16 @@ ApplicationWindow {
                                                            + "&t=" + slot : ""
 
                         // 80ms fade-in for chunks when they're ready.
+                        property bool suppressFade: false
+
+                        onSlotChanged: {
+                            suppressFade = true
+                        }
+
                         opacity: status === Image.Ready ? 1.0 : 0.0
+
                         Behavior on opacity {
+                            enabled: !suppressFade
                             NumberAnimation {
                                 duration: 80
                             }
@@ -123,7 +134,8 @@ ApplicationWindow {
                         // Subtle loading placeholder, when user scrolls really fast...
                         Rectangle {
                             anchors.fill: parent
-                            visible: parent.status !== Image.Ready
+                            visible: parent.inBounds
+                                     && parent.status !== Image.Ready
                             color: parent.status === Image.Error ? "#3a1a1a" : "#2a2a2a"
 
                             Text {

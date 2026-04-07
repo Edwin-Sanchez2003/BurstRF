@@ -17,7 +17,8 @@ ApplicationWindow {
         id: viewportGroup
 
         // Clamp the group width to the window — don't overflow on small windows
-        width: Math.min(contentW + scrollBar.width, parent.width)
+        //width: Math.min(contentW + scrollBar.width, parent.width)
+        width: contentW
         height: parent.height
         anchors.centerIn: parent
 

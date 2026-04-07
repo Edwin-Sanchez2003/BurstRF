@@ -1,6 +1,11 @@
 import QtQuick
 import QtQuick.Controls
 
+
+/*
+  TODO: Make it so the spectrogram can handle zoom & pan, and make sure this doesn't effect the
+  annotations adversely.
+*/
 ApplicationWindow {
     width: 1920
     height: 1080
@@ -8,6 +13,7 @@ ApplicationWindow {
     title: "BurstRF"
 
     // Configuration — keep in sync with C++ backend
+    // These represent pixel values on the QImages
     readonly property int chunkHeight: 300
     readonly property int totalHeight: 90000 // your "infinite" content height
     readonly property int contentW: 800
@@ -16,12 +22,18 @@ ApplicationWindow {
     Item {
         id: viewportGroup
 
-        // Clamp the group width to the window — don't overflow on small windows
-        //width: Math.min(contentW + scrollBar.width, parent.width)
-        width: contentW
+        //width: Math.min(contentW + scrollBar.width, parent.width) // Clamp the group width to the window — don't overflow on small windows
+        width: contentW // Flickable + ScrollBar -> keep at a constant width, as to not affect the pixel aspect ratio.
         height: parent.height
         anchors.centerIn: parent
 
+
+        /*
+          A Flickable manages a virtual canvas larger than its viewport.
+          Internally, it tracks contentX & contentY to render the view - this
+          is realized as a scroll offset, and applies a transform on the children
+          of the flickable.
+        */
         Flickable {
             id: flickable
 
@@ -33,25 +45,13 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
 
+            // contentWidth & Height represent the spectrogram's width & height.
+            // These must reflect the size of the dataset/spectrogram parameters.
             contentWidth: contentW
             contentHeight: totalHeight
-            flickableDirection: Flickable.VerticalFlick
-            clip: true
+            flickableDirection: Flickable.VerticalFlick // only scroll vertically, no horizontal scroll.
+            clip: true // Forces only the visible items to be rendered by Qt.
             interactive: true
-
-            // Disable Flickable's own wheel handling
-            WheelHandler {
-                acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-                blocking: true // stops the event reaching Flickable's handler
-                grabPermissions: PointerHandler.CanTakeOverFromAnything
-
-                onWheel: event => {
-                             flickable.contentY = Math.max(
-                                 0, Math.min(
-                                     flickable.contentY - event.angleDelta.y * 2.0,
-                                     flickable.contentHeight - flickable.height))
-                         }
-            }
 
             // Quantize contentY → chunk index to avoid per-frame requests
             property int chunkIndex: Math.floor(contentY / chunkHeight)

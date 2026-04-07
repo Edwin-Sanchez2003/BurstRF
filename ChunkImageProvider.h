@@ -18,6 +18,8 @@ public:
         ) override {
         // Parse "chunk?y=400&w=800&h=300" style IDs
         // Simple parsing for MVP:
+        // width and height are passed via requestedSize.
+        // y tells us where in the spectrogram to render.
         QUrlQuery q("?" + id.section('?', 1));
         int yOffset = q.queryItemValue("y").toInt();
         int w = requestedSize.width()  > 0 ? requestedSize.width()  : 800;
@@ -28,6 +30,7 @@ public:
     }
 
 private:
+    // NOTE: may need to use mutex locks if called elsewhere? make sure it's thread-safe...
     ImageBackend* m_backend; // shared, must be thread-safe
 };
 

@@ -1,10 +1,14 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 
 
 /*
   TODO: Make it so the spectrogram can handle zoom & pan, and make sure this doesn't effect the
   annotations adversely.
+  TODO: break components into their own QML files:
+    - Button & FileDialog (& error handling).
+    - Spectrogram
 */
 ApplicationWindow {
     width: 1920
@@ -17,6 +21,37 @@ ApplicationWindow {
     readonly property int chunkHeight: 300
     readonly property int totalHeight: 90000 // your "infinite" content height
     readonly property int contentW: 800
+
+    // Dataset Selection Button - used to pick a .sigmf-meta file from a File Dialog.
+    Button {
+        text: "Select SigMF Metadata File"
+        onClicked: fileDialog.open()
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: "Select SigMF Metadata File"
+        fileMode: FileDialog.OpenFile
+        nameFilters: ["SigMF Meta files (*.sigmf-meta)", "All files (*)"]
+        onAccepted: {
+            // pass to C++ backend - FileDialog returns a QUrl datatype.
+            console.log("Selected: " + selectedFile)
+
+
+            /*
+            if (sigMFBackend.loadFile(selectedFile) === false) {
+                // TODO: Handle when the file fails to load (returns False)
+                // Probably should throw a pop-up to the user!
+                console.log("Failed to load file!")
+            } else {
+                console.log("Successfully loaded: " + selectedFile)
+                console.log("Chunk count: " + sigMFBackend.chunkCount)
+                mainScreen.datasetName = selectedFile.toString().split(
+                            "/").pop()
+            }
+            */
+        }
+    }
 
     // Center the flickable + scrollbar group in the window
     Item {

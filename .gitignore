@@ -1,6 +1,14 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+# NEW: Added to ignore dependency source code (I don't want it tracked in my source code).
+# Build directory (covers FetchContent downloads)
+build/
+cmake-build-*/
+
+# In case I clone it manually by accident
+third_party/libsigmf/
+
 *~
 *.autosave
 *.a

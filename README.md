@@ -3,7 +3,9 @@ This application is meant to be an MVP SigMF annotation editor.
 
 ## TODO
 * generated half of 0.1 - need to understand properly before continuing.
-* Add in File Select button for dataset.
+* ~Add in File Select button for dataset.~
+* ~libsigmf integration.~
+* FFT (KissFFT?) integration.
 * Add in code to load IQ data from dataset.
 * Add in code to generate spectrogram images from IQ data.
 * MAKE SURE TO TIE FRONTEND variables to backend rendering:

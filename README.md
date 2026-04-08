@@ -59,6 +59,8 @@ This application is meant to be an MVP SigMF annotation editor.
 * Button/File Dialog (File Select)
 * Dataset Name (Display Text)
 * Spectrogram Viewport (Flickable + Scrollbar)
+    * Edit Annotation bounding box corners
+    * Edit Annotation Label Text Box
 * Annotation Add Button
 * Python File Select Button
 * Python Environment/Interpreter Select Button.

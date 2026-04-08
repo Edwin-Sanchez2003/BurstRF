@@ -13,6 +13,12 @@ This application is meant to be an MVP SigMF annotation editor.
     - image chunk width & height - same as spectrogram chunks.
     - resizing shouldn't mess up view (image should not be scaled ever).
     - ...others?
+    
+## Setup
+
+1. git clone https://github.com/Edwin-Sanchez2003/BurstRF.git
+2. sudo dnf install nlohmann-json-devel
+3. Open project in QtCreator.
 
 ## 0.1 User Story
 1. Open the application.
@@ -55,5 +61,6 @@ This application is meant to be an MVP SigMF annotation editor.
 * Python Environment/Interpreter Select Button.
 
 ## Dependencies
-* libsigmf (SigMF file support)
-* KissFFT? (FFT)
+* libsigmf (SigMF file support) - https://github.com/SigMF/libsigmf
+    * flatbuffers - https://flatbuffers.dev/
+* KissFFT (FFT) - https://github.com/mborgerding/kissfft

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+cmake_policy(SET CMP0048 NEW)  # project() manages VERSION variables
+cmake_policy(SET CMP0071 NEW)  # AUTOMOC/AUTOUIC skip GENERATED files cleanly
+
 project(BurstRF VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)          # libsigmf v1.0 requires C++17 for std::optional
@@ -11,6 +14,8 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 # ── FetchContent for libsigmf ─────────────────────────────────────────────────
 include(FetchContent)
+# Cache FetchContent downloads so offline builds work after first configure
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "" FORCE)
 
 # Disable warnings-as-errors globally for all fetched deps
 set(CMAKE_COMPILE_WARNING_AS_ERROR OFF CACHE BOOL "" FORCE)
@@ -19,7 +24,8 @@ set(CMAKE_COMPILE_WARNING_AS_ERROR OFF CACHE BOOL "" FORCE)
 set(FLATBUFFERS_WERROR OFF CACHE BOOL "" FORCE)
 
 # Tell libsigmf to use system-installed flatbuffers and nlohmann-json
-# (requires: sudo dnf install flatbuffers-devel nlohmann-json-devel flatbuffers-compiler)
+# (requires: sudo dnf install  nlohmann-json-devel )
+# flatbuffers-devel flatbuffers-compiler -> don't work, have to let libsigmf pull the dependency.
 set(USE_SYSTEM_JSON        ON   CACHE BOOL "" FORCE)
 set(USE_SYSTEM_FLATBUFFERS OFF  CACHE BOOL "" FORCE)
 

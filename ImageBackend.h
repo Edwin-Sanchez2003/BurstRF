@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QImage>
+#include <vector>
+#include <complex>
+#include <cmath>
 
 /*
  *
@@ -57,6 +60,37 @@ public:
                 midLine[c] = qRgb(0, 255, 0);
 
         return img;
+    }
+
+    /*
+     * TODO: Write new generateChunk Function, that takes the chunkW and chunkH & builds
+     * a fake signal to display within that chunk.
+     */
+
+
+    /*
+     * Generates a complex chirp signal that sweeps around a center frequency.
+     * centerFreq: center frequency as a fraction of sample rate (0.0 - 0.5).
+     * bandwidth: how wide the sweep is (fraction of sample rate).
+     * sampleRate: samples per second.
+     * duration: length of signal in seconds.
+     */
+    std::vector<std::complex<float>> generateChirp(float centerFreq, float bandwidth, float sampleRate, float duration)
+    {
+        int N = static_cast<int>(sampleRate * duration);
+        std::vector<std::complex<flaot>> signal(N);
+        float startFreq = centerFreq - (bandwidth / 2.0f);
+        float stopFreq = centerFreq + (bandwidth / 2.0f);
+        float chirpRate = (stopFreq - startFreq) / duration;
+
+        for (int n = 0; n < N; n++)
+        {
+            float t = n / sampleRate;
+            float phase = 2.0f * M_PI * (startFreq * t * 0.5f * chirpRate * t * t);
+            signal[n] = std::polar(1.0f, phase);
+        }
+
+        return signal;
     }
 };
 

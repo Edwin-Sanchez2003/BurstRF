@@ -7,6 +7,9 @@ This application is meant to be an MVP SigMF annotation editor.
 * ~libsigmf integration.~
 * ~FFT (KissFFT?) integration.~
 * Implement spectrogram logic (using fake data).
+    * Write function to generate fake data.
+    * write function to generate spectrogram from IQ samples.
+    * integrate with UI parameters.
 * Add in code to load IQ data from dataset (spectrogram with real data).
 * Add in code to generate spectrogram images from IQ data.
 * MAKE SURE TO TIE FRONTEND variables to backend rendering:

@@ -63,8 +63,8 @@ public:
     }
 
     /*
-     * TODO: Write new generateChunk Function, that takes the chunkW and chunkH & builds
-     * a fake signal to display within that chunk.
+     * TODO: Write new generateChunk Function, that takes the chunkW and chunkH, builds
+     * a fake signal, and generates a spectrogram to display within that chunk.
      */
 
 

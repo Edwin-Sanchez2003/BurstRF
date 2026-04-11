@@ -24,8 +24,8 @@ public:
     // Returns a chunk of height `chunkH` starting at pixel row `yOffset`
     QImage generateChunk(int yOffset, int chunkW, int chunkH) {
         //return generatePlaceholder(chunkW, chunkH);
-        float sampleRate =  40000000.0f;
-        float centerFreq = 300000000.0f;
+        float sampleRate =  40e6;
+        float centerFreq = 0.0f;
 
         std::vector<std::complex<float>> signal = generateFakeSignal(chunkW, chunkH, sampleRate, centerFreq);
         return generateSpectrogram(signal, sampleRate, centerFreq, chunkW, chunkH);
@@ -85,22 +85,23 @@ public:
 
         // We need exactly chunkW frames, each hopSize samples apart
         int numSamples = hopSize * chunkW + fftSize;
-        float duration = numSamples / sampleRate;
+        float duration = 5.0f * numSamples / sampleRate;
 
         // Generate a chirp centered at centerFreq
         // Express centerFreq as a fraction of sampleRate for generateChirp
-        float normalizedCenter = centerFreq / sampleRate;
-        float bandwidth = normalizedCenter * 0.5f; // sweep +-25% of centerFreq
-
-        return generateChirp(normalizedCenter, bandwidth, sampleRate, duration);
-
-        QImage img(chunkW, chunkH, QImage::Format_RGB32);
+        float bandwidth = 200e3;  // instead of 2e6
+        return generateChirp(centerFreq, bandwidth, sampleRate, duration);
     }
 
-    QImage generateSpectrogram(const std::vector<std::complex<float>>& signal, float sampleRate, float centerFreq, int chunkW, int chunkH)
+    QImage generateSpectrogram(const std::vector<std::complex<float>>& signal,
+                               float sampleRate,
+                               float centerFreq,
+                               int chunkW,
+                               int chunkH)
     {
         int fftSize = chunkH * 2;
         int hopSize = fftSize / 2;
+        int half = fftSize / 2;
 
         auto applyHann = [&](std::vector<kiss_fft_cpx>& buf, int N)
         {
@@ -114,18 +115,22 @@ public:
 
         kiss_fft_cfg cfg = kiss_fft_alloc(fftSize, false, nullptr, nullptr);
 
-        float dbMin = -80.f, dbMax = 0.0f;
+        float dbMin = -60.f, dbMax = 0.0f;
         std::vector<std::vector<float>> dbFrames;
         dbFrames.reserve(chunkW);
 
         int numCols = std::min(chunkW, (int)(signal.size() - fftSize) / hopSize + 1);
+
+        // 🔥 Centered crop around DC
+        int startBin = half - (chunkH / 2);
 
         for (int col = 0; col < numCols; col++)
         {
             int start = col * hopSize;
 
             std::vector<kiss_fft_cpx> in(fftSize), out(fftSize);
-            for(int i = 0; i < fftSize; i++)
+
+            for (int i = 0; i < fftSize; i++)
             {
                 in[i].r = signal[start + i].real();
                 in[i].i = signal[start + i].imag();
@@ -135,27 +140,41 @@ public:
             kiss_fft(cfg, in.data(), out.data());
 
             std::vector<float> db(chunkH);
+
             for (int i = 0; i < chunkH; i++)
             {
-                float mag = std::sqrt(out[i].r * out[i].r + out[i].i * out[i].i);
+                int idx = (startBin + i + fftSize) % fftSize;  // safe wrap
+                int shifted = (idx + half) % fftSize;          // FFT shift
+
+                float mag = std::sqrt(out[shifted].r * out[shifted].r +
+                                      out[shifted].i * out[shifted].i) / fftSize;
+
                 float val = 20.0f * std::log10(std::max(mag, 1e-6f));
                 db[i] = (std::clamp(val, dbMin, dbMax) - dbMin) / (dbMax - dbMin);
             }
+
             dbFrames.push_back(db);
         }
 
         kiss_fft_free(cfg);
 
-        QImage image(chunkW, chunkH, QImage::Format_RGB32);
-        image.fill(Qt::black); // fill in case signal was shorter than chunkW.
+        // freq = X, time = Y
+        QImage image(chunkH, chunkW, QImage::Format_RGB32);
+        image.fill(Qt::black);
 
-        for(int x = 0; x < (int)dbFrames.size(); x++)
+        for (int t = 0; t < (int)dbFrames.size(); t++)
         {
-            for (int y = 0; y < chunkH; y++)
+            for (int f = 0; f < chunkH; f++)
             {
-                float value = dbFrames[x][chunkH - 1 - y];
-                QColor color = QColor::fromHsvF((1.0f - value) * 0.66f, 1.0f, value > 0.01f ? 1.0f : 0.0f);
-                image.setPixel(x, y, color.rgb());
+                float value = dbFrames[t][chunkH - 1 - f];
+
+                QColor color = QColor::fromHsvF(
+                    (1.0f - value) * 0.66f,
+                    1.0f,
+                    value
+                    );
+
+                image.setPixel(f, t, color.rgb());
             }
         }
 
@@ -163,25 +182,29 @@ public:
     }
 
     /*
-     * Generates a complex chirp signal that sweeps around a center frequency.
-     * centerFreq: center frequency as a fraction of sample rate (0.0 - 0.5).
-     * bandwidth: how wide the sweep is (fraction of sample rate).
-     * sampleRate: samples per second.
-     * duration: length of signal in seconds.
+     * centerFreq: Hz
+     * bandwidth: Hz
+     * sampleRate: Hz
      */
     std::vector<std::complex<float>> generateChirp(float centerFreq, float bandwidth, float sampleRate, float duration)
     {
         int N = static_cast<int>(sampleRate * duration);
         std::vector<std::complex<float>> signal(N);
-        float startFreq = centerFreq - (bandwidth / 2.0f);
-        float stopFreq = centerFreq + (bandwidth / 2.0f);
-        float chirpRate = (stopFreq - startFreq) / duration;
+        float startFreq = centerFreq - bandwidth / 2.0f;
+        float stopFreq  = centerFreq + bandwidth / 2.0f;
+        float chirpRate = 0.2f * (stopFreq - startFreq) / duration;
 
+        float noise = 0.02f;
         for (int n = 0; n < N; n++)
         {
+            float envelope = std::sin(M_PI * n / N);  // smooth fade in/out
             float t = n / sampleRate;
-            float phase = 2.0f * M_PI * (startFreq * t * 0.5f * chirpRate * t * t);
-            signal[n] = std::polar(1.0f, phase);
+            float phase = 2.0f * M_PI * (startFreq * t + 0.5f * chirpRate * t * t);
+            signal[n] = envelope * std::polar(1.0f, phase);
+            signal[n] += std::complex<float>(
+                noise * ((rand() / (float)RAND_MAX) - 0.5f),
+                noise * ((rand() / (float)RAND_MAX) - 0.5f)
+                );
         }
 
         return signal;

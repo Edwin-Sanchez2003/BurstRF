@@ -15,7 +15,8 @@ public:
     QQuickImageResponse* requestImageResponse(
         const QString& id,          // everything after "image://myprovider/"
         const QSize& requestedSize  // size hint from QML Image item
-        ) override {
+        ) override
+    {
         // Parse "chunk?y=400&w=800&h=300" style IDs
         // Simple parsing for MVP:
         // width and height are passed via requestedSize.

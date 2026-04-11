@@ -94,6 +94,7 @@ ApplicationWindow {
                 flickableDirection: Flickable.VerticalFlick // only scroll vertically, no horizontal scroll.
                 clip: true // Forces only the visible items to be rendered by Qt - good for when we add annotation bboxes/text.
                 interactive: true // Flickable handles touch/mouse drag gestures (ie. Spectrogram navigation).
+                boundsBehavior: Flickable.StopAtBounds
 
 
                 /*
@@ -109,79 +110,95 @@ ApplicationWindow {
                   NOTE: properties are live relationships - they are a constraint the engine maintains. This is built
                   with signal/slots, which is made to be an automatic observer pattern in QML for properties.
                 */
-                property int chunkIndex: contentY > 0 ? Math.floor(
-                                                            contentY / chunkHeight) : 0
+                property int chunkIndex: {
+                    let maxContentY = totalHeight - height // 90000 - 1130 = 88870
+                    let clampedY = Math.max(0, Math.min(contentY, maxContentY))
+                    return Math.floor(clampedY / chunkHeight)
+                }
+
+                readonly property int chunksVisible: Math.ceil(
+                                                         height / chunkHeight) // on Flickable
+                readonly property int poolSize: chunksVisible + 3 // 1 above + visible + 2 below
 
                 // Repeater: A virtual scrolling pool. The actual number of elements at any time is determined by
                 // the model number.
                 Repeater {
-                    model: 6
-                    delegate: Image {
+                    model: flickable.poolSize
+                    delegate: Item {
                         required property int index
 
-                        // -1 puts the first ImageChunk above the visible screen, model: 6 is just enough
-                        // to put 1/2 extra below the visible screen.
-                        // TODO: group model #, chunkIndex, and chunkHeight to keep a consistent number of chunks
-                        // rendered no matter what!
-                        property int slot: flickable.chunkIndex - 1 + index
-                        property int slotY: slot * chunkHeight
-                        property bool inBounds: slot >= 0
-                                                && (slotY + chunkHeight) <= totalHeight
+                        // No slot, no slotY, no inBounds properties.
+                        // Everything computed fresh from the same two inputs.
+                        readonly property int _slot: flickable.chunkIndex - 1 + index
+                        readonly property int _slotY: (_slot >= 0
+                                                       && (_slot * chunkHeight + chunkHeight) <= totalHeight) ? _slot * chunkHeight : -chunkHeight
 
                         x: 0
-                        y: slotY
-                        // fixed size - not updated with scaling. also maps to ChunkImageProvider, so must match what backend is told to render.
+                        y: _slot * chunkHeight // position always tracks slot directly
                         width: contentW
                         height: chunkHeight
 
-                        fillMode: Image.PreserveAspectCrop
-                        cache: false // forces Repeater to not cache any Images.
-
-
-                        /*
-                          Qt's custom image provider URL scheme:
-                          1. Looks up the registered QuickImageProvider named "chunks" in the QML engine.
-                          2. Calls chunk.requestImage() on a background thread (sub-classed from QQuickAsyncImageProvider).
-                          3. When the result is ready, the result is put back in the main thread and updates the image item.
-                          NOTE: &t= is a cache-buster - as the URL is always unique, this forces the backend to re-render
-                          the image chunk.
-                        */
-                        source: (slot >= 0
-                                 && slotY < totalHeight) ? "image://chunks/chunk?y=" + slotY
-                                                           + "&t=" + slot : ""
-
-                        // 80ms fade-in for chunks when they're ready.
-                        property bool suppressFade: false
-
-                        onSlotChanged: {
-                            suppressFade = true
+                        readonly property string chunkSource: {
+                            let s = flickable.chunkIndex - 1 + index
+                            let sy = s * chunkHeight
+                            if (s < 0 || sy < 0
+                                    || (sy + chunkHeight) > totalHeight)
+                                return ""
+                            return "image://chunks/chunk?y=" + sy + "&t=" + s
                         }
 
-                        opacity: status === Image.Ready ? 1.0 : 0.0
+                        Image {
+                            id: backBuffer
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectCrop
+                            cache: false
+                            visible: frontBuffer.status !== Image.Ready
+                        }
 
-                        Behavior on opacity {
-                            enabled: !suppressFade
-                            NumberAnimation {
-                                duration: 80
+                        Image {
+                            id: frontBuffer
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectCrop
+                            cache: false
+                            source: chunkSource
+                            opacity: 0.0
+
+                            onStatusChanged: {
+                                if (status === Image.Ready) {
+                                    backBuffer.source = source
+                                    opacity = 1.0
+                                }
+                            }
+
+                            onSourceChanged: {
+                                opacity = 0.0
+                                if (source === "") {
+                                    backBuffer.source = ""
+                                }
+                            }
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 80
+                                }
                             }
                         }
 
-                        // Subtle loading placeholder, when user scrolls really fast...
                         Rectangle {
                             anchors.fill: parent
-                            visible: parent.inBounds
-                                     && parent.status !== Image.Ready
-                            color: parent.status === Image.Error ? "#3a1a1a" : "#2a2a2a"
-
+                            visible: chunkSource !== ""
+                                     && frontBuffer.status !== Image.Ready
+                                     && backBuffer.status !== Image.Ready
+                            color: frontBuffer.status === Image.Error ? "#3a1a1a" : "#2a2a2a"
                             Text {
                                 anchors.centerIn: parent
-                                text: parent.status
+                                text: frontBuffer.status
                                       === Image.Error ? "Error loading chunk" : "Loading..."
-                                color: parent.status === Image.Error ? "#aa4444" : "#555555"
+                                color: frontBuffer.status === Image.Error ? "#aa4444" : "#555555"
                                 font.pixelSize: 12
                             }
                         }
-                    } // End Image
+                    } // end delegate Item
                 } // End Repeater
             } // End Flickable
 

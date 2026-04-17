@@ -23,7 +23,7 @@ public:
     // Called from background thread — must be thread-safe!
     // Returns a chunk of height `chunkH` starting at pixel row `yOffset`
     QImage generateChunk(int yOffset, int chunkW, int chunkH) {
-        //return generatePlaceholder(chunkW, chunkH);
+        return generatePlaceholder(chunkW, chunkH);
         float sampleRate =  40e6;
         float centerFreq = 0.0f;
 

@@ -5,6 +5,7 @@
 #include <QUrlQuery>
 #include "ChunkImageResponse.h"
 #include "ImageBackend.h"
+#include <QDebug>
 
 class ChunkImageProvider : public QQuickAsyncImageProvider {
 public:
@@ -23,6 +24,7 @@ public:
         // y tells us where in the spectrogram to render.
         QUrlQuery q("?" + id.section('?', 1));
         int yOffset = q.queryItemValue("y").toInt();
+        // NOTE: Get width & height from backend! Hardcoded for now...
         int w = requestedSize.width()  > 0 ? requestedSize.width()  : 800;
         int h = requestedSize.height() > 0 ? requestedSize.height() : 300;
 

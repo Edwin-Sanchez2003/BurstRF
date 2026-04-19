@@ -96,7 +96,7 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
 
     // loop over numRows
     for (unsigned int i = 0; i < numRows; ++i) {
-        // use iterators to determine when
+        // use iterators to determine which section of samples to grab.
         auto start = samples.begin() + i * this->nfft;
         auto end = std::min(start + this->nfft, samples.end());
 
@@ -111,6 +111,11 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
         fft.transform(chunk.data(), output.data());
 
         // TODO: calculate magnitudes on output
+        for (unsigned int j = 0; j < this->nfft; ++j)
+        {
+            double magnitude = std::abs(output[j]);
+        }
+
 
         // TODO: convert magnitudes to color range (RGB pixels)
 
@@ -123,7 +128,8 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
 
 double SpectrogramBuilder::binIndexToFrequencyCenter(unsigned int binIndex)
 {
-    if (binIndex > this->nfft) throw std::invalid_argument("binIndex must be less than the max index value, nfft.");
-    // TODO: return the center frequency given the index of the bin, using the sample rate.
+    if (binIndex >= this->nfft) throw std::invalid_argument("binIndex must be less than the max index value, nfft.");
+
+    // return the center frequency given the index of the bin, using the sample rate.
     return (static_cast<double>(binIndex) * this->sampleRate) / static_cast<double>(this->nfft);
 }

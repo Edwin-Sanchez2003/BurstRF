@@ -19,10 +19,10 @@ public:
     SpectrogramBuilder(double sampleRate, unsigned int nperseg, unsigned int noverlap, unsigned int nfft);
 
     // Main workhorse: generates a spectrogram using the configured member variables.
-    QImage generateSpectrogram(std::vector<std::complex<double>> samples);
+    QImage generateSpectrogram(const std::vector<std::complex<double>>& samples);
 
     // Helper to identify what frequency a certain image index corresponds to.
-    double binIndexToFrequencyCenter(unsigned int binIndex);
+    double binIndexToFrequencyCenter(const unsigned int binIndex);
 
     /*
      * Getters/Setters

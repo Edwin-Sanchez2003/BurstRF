@@ -80,9 +80,44 @@ unsigned int SpectrogramBuilder::getNfft() const
 }
 
 
-QImage SpectrogramBuilder::generateSpectrogram(std::vector<std::complex<double>> samples)
+QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples)
 {
-    // NOTE: if samples is less than nperseg per fft row generated, zero-pad w/nfft value!!!
+    // Loop over ceil(samples.size() / nfft) -> that's the number of fft rows we will generate.
+    // Integer division ceiling trick (no floating point needed)
+    unsigned int numRows = (samples.size() + this->nfft - 1) / this->nfft;
+
+    // TODO: build QImage buffer to insert rows as they are converted.
+    QImage imageBuffer();
+
+    // TODO: use noverlap properly!!!
+
+    // Create a kissfft object for forward transform (false = forward, true = inverse)
+    kissfft<double> fft(this->nfft, false);
+
+    // loop over numRows
+    for (unsigned int i = 0; i < numRows; ++i) {
+        // use iterators to determine when
+        auto start = samples.begin() + i * this->nfft;
+        auto end = std::min(start + this->nfft, samples.end());
+
+        // Create input vector with complex floats
+        std::vector<std::complex<double>> chunk(start, end);
+        std::vector<std::complex<double>> output(nfft);
+
+        // If samples is less than nperseg per fft row generated, zero-pad w/nfft value.
+        if (chunk.size() < this->nfft) chunk.resize(this->nfft);
+
+        // Perform FFT on chunk
+        fft.transform(chunk.data(), output.data());
+
+        // TODO: calculate magnitudes on output
+
+        // TODO: convert magnitudes to color range (RGB pixels)
+
+        // TODO: stick into QImage's buffer.
+    }
+
+    return imageBuffer;
 }
 
 

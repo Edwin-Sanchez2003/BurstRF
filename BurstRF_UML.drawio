@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram name="Page-1" id="gXdXRD-hxSofAkPK0ilU">
-    <mxGraphModel dx="1832" dy="663" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2995" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -33,17 +33,41 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SigMFBackend" vertex="1">
-          <mxGeometry height="86" width="160" x="620" y="197" as="geometry" />
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-22" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-140" y="270" />
+              <mxPoint x="-140" y="430" />
+            </Array>
+            <mxPoint x="620" y="270" as="sourcePoint" />
+            <mxPoint x="-240" y="430" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-2" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-23" connectable="0" parent="BPabmzHj7sxv_MmH5qd7-22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="coupling" vertex="1">
+          <mxGeometry relative="1" x="0.4964" y="-4" as="geometry">
+            <mxPoint x="4" y="54" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="spiaGc8N6B3giQx-SNpL-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SigMFBackend" vertex="1">
+          <mxGeometry height="164" width="160" x="620" y="163" as="geometry" />
+        </mxCell>
+        <mxCell id="spiaGc8N6B3giQx-SNpL-2" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int: spectrogramHeight" vertex="1">
           <mxGeometry height="26" width="160" y="26" as="geometry" />
         </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-2" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int: chunkHeight" vertex="1">
+          <mxGeometry height="26" width="160" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-3" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int: spectrogramWidth" vertex="1">
+          <mxGeometry height="26" width="160" y="78" as="geometry" />
+        </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-3" parent="spiaGc8N6B3giQx-SNpL-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
-          <mxGeometry height="8" width="160" y="52" as="geometry" />
+          <mxGeometry height="8" width="160" y="104" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-4" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
-          <mxGeometry height="26" width="160" y="60" as="geometry" />
+          <mxGeometry height="26" width="160" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-1" parent="spiaGc8N6B3giQx-SNpL-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
+          <mxGeometry height="26" width="160" y="138" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-5" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
@@ -88,7 +112,7 @@
           <mxGeometry height="20" width="150" x="1080" y="100" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-19" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Frontend-Backend Data Passing&lt;/h1&gt;&lt;p&gt;Some data needs to be passed from Frontend to Backend:&lt;/p&gt;&lt;p&gt;&lt;b&gt;Spectrogram (Frontend):&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;chunkWidth -&amp;nbsp;&lt;/b&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;width of a single spectrogram chunk.&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;chunkHeight&lt;/b&gt; - the height of a single spectrogram chunk.&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;totalHeight - &lt;/b&gt;the total height of the spectrogram (dependent on the size of the dataset).&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div&gt;Steps:&lt;/div&gt;&lt;div&gt;1. Spectrogram view is initialized with hard-coded &lt;b&gt;chunkWidth&lt;/b&gt;, &lt;b&gt;chunkHeight &lt;/b&gt;pulled from the backend. &lt;b&gt;totalHeight&lt;/b&gt; is zero (no content).&lt;/div&gt;&lt;div&gt;---User selects dataset.---&lt;/div&gt;&lt;div&gt;3. &lt;b&gt;totalHeight&lt;/b&gt; is calculated using the &lt;b&gt;sampleCount&lt;/b&gt; in the dataset and the &lt;b&gt;chunkWidth&lt;/b&gt;. &lt;u&gt;totalHeight = sampleCount / chunkWidth?&lt;/u&gt;&lt;/div&gt;&lt;div&gt;4. Dataset configures spectrogram parameters:&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;- fftSize&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;- window&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;- noverlap&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;- ...&lt;br&gt;&lt;/div&gt;&lt;div&gt;5. Frontend is updated with newly calculated totalHeight and begins making requests for spectrogram Chunks.&lt;/div&gt;&lt;div&gt;6. Backend receives requests for spectogram chunks, and begins generating them as QImages, then pushing back to the Frontend.&lt;/div&gt;&lt;p&gt;&lt;/p&gt;" vertex="1">
-          <mxGeometry height="430" width="425" x="425" y="510" as="geometry" />
+          <mxGeometry height="430" width="425" x="942.5" y="760" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-20" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Frontend States&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 12px; font-weight: normal;&quot;&gt;There are a few valid states that we can be in.&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;* Blank Spectrogram (No Dataset selected) -&amp;gt; this is the initial state. No data is displayed.&lt;/p&gt;&lt;p&gt;* Populated Spectrogram (A Dataset is selected) -&amp;gt; this happens once the proper information is communicated from the frontend to the backend &amp;amp; back on how data should be displayed.&lt;/p&gt;&lt;p&gt;* Failed Spectrogram (A dataset fails to load/crashes at runtime) -&amp;gt; the program warns the user that something catastrophic went wrong and tells the user.&amp;nbsp;&lt;/p&gt;" vertex="1">
           <mxGeometry height="220" width="520" x="910" y="500" as="geometry" />
@@ -130,16 +154,58 @@
           <mxGeometry height="26" width="160" y="60" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-29" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SpectrogramBuilder" vertex="1">
-          <mxGeometry height="86" width="160" x="-460" y="180" as="geometry" />
+          <mxGeometry height="450" width="620" x="-860" y="180" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-30" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
-          <mxGeometry height="26" width="160" y="26" as="geometry" />
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-11" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- double: sampleRate" vertex="1">
+          <mxGeometry height="26" width="620" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-7" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- uint: nperseg // Number of samples that get FFT computed on per FFT computation." vertex="1">
+          <mxGeometry height="26" width="620" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-4" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- uint: noverlap // Number of samples to overlap each FFT computation" vertex="1">
+          <mxGeometry height="26" width="620" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-8" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- uint: nfft // Size of FFT (if zero-padding is desired, otherwise same as nperseg)" vertex="1">
+          <mxGeometry height="26" width="620" y="104" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-31" parent="spiaGc8N6B3giQx-SNpL-29" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
-          <mxGeometry height="8" width="160" y="52" as="geometry" />
+          <mxGeometry height="8" width="620" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-32" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
-          <mxGeometry height="26" width="160" y="60" as="geometry" />
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-13" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ SpectrogramBuilder(double&amp;nbsp;sampleRate)" vertex="1">
+          <mxGeometry height="26" width="620" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-12" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ SpectrogramBuilder(double&amp;nbsp;sampleRate, uint nperseg, uint noverlap, uint nfft)" vertex="1">
+          <mxGeometry height="26" width="620" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="spiaGc8N6B3giQx-SNpL-32" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ generateSpectrogram(std::vector&amp;lt;std::complex&amp;lt;double&amp;gt;&amp;gt; samples): QImage" vertex="1">
+          <mxGeometry height="26" width="620" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-10" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ binIndexToFrequencyCenter(uint index): float // converts an index to the frequency center of that bin from FFT" vertex="1">
+          <mxGeometry height="26" width="620" y="216" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-14" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getSampleRate(): double" vertex="1">
+          <mxGeometry height="26" width="620" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-15" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getNperseg(): uint" vertex="1">
+          <mxGeometry height="26" width="620" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-16" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getNoverlap(): uint" vertex="1">
+          <mxGeometry height="26" width="620" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-17" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getNfft(): uint" vertex="1">
+          <mxGeometry height="26" width="620" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-18" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setSampleRate(double sampleRate): void" vertex="1">
+          <mxGeometry height="26" width="620" y="346" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-19" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNperseg(uint nperseg): void" vertex="1">
+          <mxGeometry height="26" width="620" y="372" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-20" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNoverlap(uint noverlap): void" vertex="1">
+          <mxGeometry height="26" width="620" y="398" as="geometry" />
+        </mxCell>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-21" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNfft(uint nfft): void" vertex="1">
+          <mxGeometry height="26" width="620" y="424" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-59" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="spiaGc8N6B3giQx-SNpL-37">
           <mxGeometry relative="1" as="geometry" />
@@ -150,7 +216,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-33" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="ChunkSpectrogramProvider" vertex="1">
-          <mxGeometry height="86" width="235" x="560" y="330" as="geometry" />
+          <mxGeometry height="86" width="235" x="570" y="560" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-34" parent="spiaGc8N6B3giQx-SNpL-33" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
           <mxGeometry height="26" width="235" y="26" as="geometry" />
@@ -162,7 +228,7 @@
           <mxGeometry height="26" width="235" y="60" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-37" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="ChunkSpectrogramResponse" vertex="1">
-          <mxGeometry height="86" width="260" x="240" y="343" as="geometry" />
+          <mxGeometry height="86" width="260" x="250" y="567" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-38" parent="spiaGc8N6B3giQx-SNpL-37" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
           <mxGeometry height="26" width="260" y="26" as="geometry" />
@@ -182,39 +248,16 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="ChunkSpectrogramProvider knows of SigMFBackend, and passes data to ChunkSpectrogramResponse" vertex="1">
-          <mxGeometry height="61" width="250" x="550" y="429" as="geometry" />
+          <mxGeometry height="61" width="250" x="575" y="730" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-50" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="ChunkSpectrogramResponse&amp;nbsp;knows of SigMFBackend, and makes a call to the SigMFDataset with a yOffset to get a chunk of spectrogram.&lt;div&gt;(should check if SigMFDataset object exists, as it could possibly NOT exist... return nothing? something? if it doesn&#39;t.&lt;/div&gt;" vertex="1">
-          <mxGeometry height="121" width="250" x="240" y="439" as="geometry" />
+          <mxGeometry height="121" width="250" x="250" y="690" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-51" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="SigMFDataset knows of SigMFDataFile (where it pulls the IQ from using the yOffset and the hardcoded chunkWidth and chunkHeight) and SpectrogramBuilder (which knows the default spectrogram parameters and can give IQ to build a spectrogram as a QImage) and returns the QImage to the callee." vertex="1">
-          <mxGeometry height="118" width="250" x="70" y="102" as="geometry" />
+          <mxGeometry height="118" width="250" y="24" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-53" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.393;entryY=0.012;entryDx=0;entryDy=0;entryPerimeter=0;" target="spiaGc8N6B3giQx-SNpL-37">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="360" y="293" />
-              <mxPoint x="342" y="293" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-55" connectable="0" parent="spiaGc8N6B3giQx-SNpL-53" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="coupling" vertex="1">
-          <mxGeometry relative="1" x="-0.3513" y="-2" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-57" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="spiaGc8N6B3giQx-SNpL-29">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="-190" y="240" />
-              <mxPoint x="-190" y="240" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-58" connectable="0" parent="spiaGc8N6B3giQx-SNpL-57" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="coupling" vertex="1">
-          <mxGeometry relative="1" x="0.6206" y="1" as="geometry">
-            <mxPoint x="88" y="-1" as="offset" />
-          </mxGeometry>
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-9" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Spectrogram Builder&lt;/h1&gt;&lt;p&gt;The purpose of spectrogram Builder is to generate a spectrogram as a QImage from any given vector of IQ samples. It must be first configured with common Spectrogram parameters, such as sampleRate, nperseg, noverlap, and nfft.&lt;/p&gt;&lt;p&gt;* The spectrogram builder need to be able to be configured with spectrogram related parameters.&lt;/p&gt;&lt;p&gt;* The spectrogram builder needs to be able to generate a spectrogram given those parameters, and store them to a QImage.&lt;/p&gt;&lt;p&gt;* The spectrogram builder needs to be able to return the frequency center of any bin given a bin index.&lt;/p&gt;" vertex="1">
+          <mxGeometry height="260" width="550" x="-840" y="660" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

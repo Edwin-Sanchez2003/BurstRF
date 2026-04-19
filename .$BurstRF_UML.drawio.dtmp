@@ -180,7 +180,7 @@
         <mxCell id="spiaGc8N6B3giQx-SNpL-32" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ generateSpectrogram(std::vector&amp;lt;std::complex&amp;lt;double&amp;gt;&amp;gt; samples): QImage" vertex="1">
           <mxGeometry height="26" width="620" y="190" as="geometry" />
         </mxCell>
-        <mxCell id="BPabmzHj7sxv_MmH5qd7-10" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ binIndexToFrequencyCenter(uint index): float // converts an index to the frequency center of that bin from FFT" vertex="1">
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-10" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ binIndexToFrequencyCenter(uint index): double // converts an index to the frequency center of that bin from FFT" vertex="1">
           <mxGeometry height="26" width="620" y="216" as="geometry" />
         </mxCell>
         <mxCell id="BPabmzHj7sxv_MmH5qd7-14" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getSampleRate(): double" vertex="1">

@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram name="Page-1" id="gXdXRD-hxSofAkPK0ilU">
-    <mxGraphModel dx="2995" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="4289" dy="1749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -154,7 +154,7 @@
           <mxGeometry height="26" width="160" y="60" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-29" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SpectrogramBuilder" vertex="1">
-          <mxGeometry height="450" width="620" x="-860" y="180" as="geometry" />
+          <mxGeometry height="398" width="620" x="-860" y="180" as="geometry" />
         </mxCell>
         <mxCell id="BPabmzHj7sxv_MmH5qd7-11" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- double: sampleRate" vertex="1">
           <mxGeometry height="26" width="620" y="26" as="geometry" />
@@ -180,7 +180,7 @@
         <mxCell id="spiaGc8N6B3giQx-SNpL-32" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ generateSpectrogram(std::vector&amp;lt;std::complex&amp;lt;double&amp;gt;&amp;gt; samples): QImage" vertex="1">
           <mxGeometry height="26" width="620" y="190" as="geometry" />
         </mxCell>
-        <mxCell id="BPabmzHj7sxv_MmH5qd7-10" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ binIndexToFrequencyCenter(uint index): float // converts an index to the frequency center of that bin from FFT" vertex="1">
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-10" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ binIndexToFrequencyCenter(uint index): double // converts an index to the frequency center of that bin from FFT" vertex="1">
           <mxGeometry height="26" width="620" y="216" as="geometry" />
         </mxCell>
         <mxCell id="BPabmzHj7sxv_MmH5qd7-14" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ getSampleRate(): double" vertex="1">
@@ -198,14 +198,8 @@
         <mxCell id="BPabmzHj7sxv_MmH5qd7-18" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setSampleRate(double sampleRate): void" vertex="1">
           <mxGeometry height="26" width="620" y="346" as="geometry" />
         </mxCell>
-        <mxCell id="BPabmzHj7sxv_MmH5qd7-19" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNperseg(uint nperseg): void" vertex="1">
+        <mxCell id="BPabmzHj7sxv_MmH5qd7-19" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setParams(uint nperseg, uint noverlap, uint nfft): void" vertex="1">
           <mxGeometry height="26" width="620" y="372" as="geometry" />
-        </mxCell>
-        <mxCell id="BPabmzHj7sxv_MmH5qd7-20" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNoverlap(uint noverlap): void" vertex="1">
-          <mxGeometry height="26" width="620" y="398" as="geometry" />
-        </mxCell>
-        <mxCell id="BPabmzHj7sxv_MmH5qd7-21" parent="spiaGc8N6B3giQx-SNpL-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ setNfft(uint nfft): void" vertex="1">
-          <mxGeometry height="26" width="620" y="424" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-59" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="spiaGc8N6B3giQx-SNpL-37">
           <mxGeometry relative="1" as="geometry" />

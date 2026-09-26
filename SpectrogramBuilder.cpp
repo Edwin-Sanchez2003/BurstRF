@@ -4,7 +4,7 @@
 #include <complex>
 #include <stdexcept>
 #include <QImage>
-#include <kiss_fft.h>
+#include <kissfft.hh>
 
 
 SpectrogramBuilder::SpectrogramBuilder(double sampleRate)
@@ -82,44 +82,42 @@ unsigned int SpectrogramBuilder::getNfft() const
 
 QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples)
 {
-    // Loop over ceil(samples.size() / nfft) -> that's the number of fft rows we will generate.
-    // Integer division ceiling trick (no floating point needed)
     unsigned int numRows = (samples.size() + this->nfft - 1) / this->nfft;
 
-    // TODO: build QImage buffer to insert rows as they are converted.
-    QImage imageBuffer();
+    QImage imageBuffer(numRows, this->nfft, QImage::Format_Grayscale8);
 
-    // TODO: use noverlap properly!!!
-
-    // Create a kissfft object for forward transform (false = forward, true = inverse)
     kissfft<double> fft(this->nfft, false);
 
-    // loop over numRows
+    std::vector<std::vector<double>> magnitudes(numRows, std::vector<double>(this->nfft));
+    double maxMag = 0.0;
+
+    // TODO: use noverlap properly — currently steps by nfft with no overlap.
     for (unsigned int i = 0; i < numRows; ++i) {
-        // use iterators to determine which section of samples to grab.
         auto start = samples.begin() + i * this->nfft;
         auto end = std::min(start + this->nfft, samples.end());
 
-        // Create input vector with complex floats
         std::vector<std::complex<double>> chunk(start, end);
-        std::vector<std::complex<double>> output(nfft);
+        chunk.resize(this->nfft); // zero-pads if short
 
-        // If samples is less than nperseg per fft row generated, zero-pad w/nfft value.
-        if (chunk.size() < this->nfft) chunk.resize(this->nfft);
-
-        // Perform FFT on chunk
+        std::vector<std::complex<double>> output(this->nfft);
         fft.transform(chunk.data(), output.data());
 
-        // TODO: calculate magnitudes on output
-        for (unsigned int j = 0; j < this->nfft; ++j)
-        {
+        for (unsigned int j = 0; j < this->nfft; ++j) {
             double magnitude = std::abs(output[j]);
+            magnitudes[i][j] = magnitude;
+            maxMag = std::max(maxMag, magnitude);
         }
+    }
 
-
-        // TODO: convert magnitudes to color range (RGB pixels)
-
-        // TODO: stick into QImage's buffer.
+    // Convert to grayscale pixels (simple log-scaled normalization)
+    for (unsigned int i = 0; i < numRows; ++i) {
+        for (unsigned int j = 0; j < this->nfft; ++j) {
+            double mag = magnitudes[i][j];
+            double norm = (maxMag > 0.0) ? mag / maxMag : 0.0;
+            int gray = static_cast<int>(std::clamp(norm * 255.0, 0.0, 255.0));
+            // row 0 of the image = bin 0; flip if you want low freq at bottom
+            imageBuffer.setPixel(i, j, qRgb(gray, gray, gray));
+        }
     }
 
     return imageBuffer;

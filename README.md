@@ -2,6 +2,7 @@
 This application is meant to be an MVP SigMF annotation editor.
 
 ## TODO
+
 * generated half of 0.1 - need to understand properly before continuing.
 * ~Add in File Select button for dataset.~
 * ~libsigmf integration.~
@@ -18,6 +19,17 @@ This application is meant to be an MVP SigMF annotation editor.
     - resizing shouldn't mess up view (image should not be scaled ever).
     - ...others?
     
+
+### Initial Rendering
+* Focus should NOT be trying to render a file -> it should be to render captures within a file, since captures contain the frequency key:
+    * User picks a file to view.
+    * Visuals initially load the captures for viewing in order.
+    * If a capture is above the in-view block size (constant, 400_000 samples? Whatever fills 2 viewports?) then chunk the capture as well for viewing - avoid OOM issues.
+    * If a capture is less than the in-view block size, need to render the full capture plus parts of the next capture(s). We will fill up the in-memory viewport block, irrespective of the capture's size.
+* Captures should be de-marked visually, especially when a frequency shift occurs between blocks.
+* Channels should be split between multiple views (with an option to tab between them OR to do a pop-out).
+* Eventually, we stack SigMF Collections on top of this to allow a user to view multiple files as a stream.
+
 ## Setup
 
 1. git clone https://github.com/Edwin-Sanchez2003/BurstRF.git

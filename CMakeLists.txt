@@ -5,7 +5,7 @@ cmake_policy(SET CMP0071 NEW)  # AUTOMOC/AUTOUIC skip GENERATED files cleanly
 
 project(BurstRF VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)              # libsigmf v1.0 requires C++17 for std::optional
+set(CMAKE_CXX_STANDARD 23)              # sigmf_io requires C++23; libsigmf only needs C++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
@@ -41,6 +41,18 @@ FetchContent_MakeAvailable(libsigmf)
 # Patch bundled flatbuffers stl_emulation.h - const member assignment
 # breaks on GCC 13+ with -Wtemplate-body
 include(patches/fix_flatbuffers_stl_emulation.cmake)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── FetchContent for sigmf_io ─────────────────────────────────────────────────
+set(BUILD_TESTS OFF CACHE BOOL "" FORCE)   # don't build sigmf_io's test suite as a subproject
+
+FetchContent_Declare(
+    sigmf_io
+    GIT_REPOSITORY https://github.com/Edwin-Sanchez2003/sigmf-io.git
+    GIT_TAG        main
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(sigmf_io)
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ── FetchContent for kissfft ──────────────────────────────────────────────────
@@ -89,6 +101,7 @@ target_link_libraries(appBurstRF
             libsigmf                # libsigmf target
             flatbuffers             # flatbuffers is needed at link time per their README
             kissfft::kissfft-float  # kissfft for std::complex<float>
+            sigmf_io::sigmf_io
 )
 
 # libsigmf generates headers into the build tree; this makes them findable

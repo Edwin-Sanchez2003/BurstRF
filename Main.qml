@@ -37,6 +37,9 @@ ApplicationWindow {
             // pass to C++ backend - FileDialog returns a QUrl datatype.
             console.log("Selected: " + selectedFile)
 
+            // TODO: initialize Recording object here for C++ backend.
+            // Updated totalHeight for the viewer so it can properly render chunks.
+
 
             /*
             if (sigMFBackend.loadFile(selectedFile) === false) {

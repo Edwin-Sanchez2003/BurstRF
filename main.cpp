@@ -4,15 +4,9 @@
 #include "ImageBackend.h"
 #include "ChunkImageProvider.h"
 
-#include <iostream>
-#include <sigmf_io/recording.h>
-
 
 int main(int argc, char *argv[])
 {
-
-    sigmf_io::Recording recording = sigmf_io::Recording("/var/home/edwsanch/Downloads/trimmedSamples.sigmf-meta");
-    std::cout << recording.data_path() << "\n";
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;

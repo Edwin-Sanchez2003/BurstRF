@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include <kiss_fft.h>
+#include <sigmf_io/recording.h>
 
 /*
  *
@@ -24,11 +25,19 @@ public:
     // Returns a chunk of height `chunkH` starting at pixel row `yOffset`
     QImage generateChunk(int yOffset, int chunkW, int chunkH) {
         return generatePlaceholder(chunkW, chunkH);
-        float sampleRate =  40e6;
-        float centerFreq = 0.0f;
 
-        std::vector<std::complex<float>> signal = generateFakeSignal(chunkW, chunkH, sampleRate, centerFreq);
-        return generateSpectrogram(signal, sampleRate, centerFreq, chunkW, chunkH);
+        //std::vector<std::complex<float>> signal = generateFakeSignal(chunkW, chunkH, 40e6, 0.0f);
+
+        // TODO: get a reference to the current recording, if populated (ie. user must first select it).
+        // And if it exists, calculate the indices to read from and grab the chunk. If uneven at the end,
+        // pad the image with rows of black for now.
+        /*
+        int64_t sample_start = yOffset;
+        int64_t sample_count = chunkW*chunkH;
+        int64_t channel = 1;
+        std::vector<std::complex<float>> signal = sigmf_io::Recording::get_samples(sample_start, sample_count, channel);
+        return generateSpectrogram(signal, chunkW, chunkH);
+        */
     }
 
     QImage generatePlaceholder(int chunkW, int chunkH)
@@ -93,12 +102,11 @@ public:
         return generateChirp(centerFreq, bandwidth, sampleRate, duration);
     }
 
-    QImage generateSpectrogram(const std::vector<std::complex<float>>& signal,
-                               float sampleRate,
-                               float centerFreq,
-                               int chunkW,
-                               int chunkH)
-    {
+    QImage generateSpectrogram(
+        const std::vector<std::complex<float>>& signal,
+        int chunkW,
+        int chunkH
+    ) {
         int fftSize = chunkH * 2;
         int hopSize = fftSize / 2;
         int half = fftSize / 2;

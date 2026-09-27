@@ -19,7 +19,6 @@ ApplicationWindow {
     // Configuration — keep in sync with C++ backend
     // These represent pixel values on the QImages
     readonly property int chunkHeight: 300
-    readonly property int totalHeight: 90000 // your "infinite" content height
     readonly property int contentW: 800
 
     // Dataset Selection Button - used to pick a .sigmf-meta file from a File Dialog.
@@ -34,25 +33,11 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         nameFilters: ["SigMF Meta files (*.sigmf-meta)", "All files (*)"]
         onAccepted: {
-            // pass to C++ backend - FileDialog returns a QUrl datatype.
-            console.log("Selected: " + selectedFile)
-
-            // TODO: initialize Recording object here for C++ backend.
-            // Updated totalHeight for the viewer so it can properly render chunks.
-
-
-            /*
-            if (sigMFBackend.loadFile(selectedFile) === false) {
-                // TODO: Handle when the file fails to load (returns False)
-                // Probably should throw a pop-up to the user!
+            if (!imageBackend.loadFile(selectedFile)) {
                 console.log("Failed to load file!")
             } else {
                 console.log("Successfully loaded: " + selectedFile)
-                console.log("Chunk count: " + sigMFBackend.chunkCount)
-                mainScreen.datasetName = selectedFile.toString().split(
-                            "/").pop()
             }
-            */
         }
     }
 
@@ -93,7 +78,7 @@ ApplicationWindow {
                 // contentWidth & Height represent the spectrogram's width & height.
                 // These must reflect the size of the dataset/spectrogram parameters.
                 contentWidth: contentW
-                contentHeight: totalHeight
+                contentHeight: imageBackend.totalHeight
                 flickableDirection: Flickable.VerticalFlick // only scroll vertically, no horizontal scroll.
                 clip: true // Forces only the visible items to be rendered by Qt - good for when we add annotation bboxes/text.
                 interactive: true // Flickable handles touch/mouse drag gestures (ie. Spectrogram navigation).
@@ -114,7 +99,7 @@ ApplicationWindow {
                   with signal/slots, which is made to be an automatic observer pattern in QML for properties.
                 */
                 property int chunkIndex: {
-                    let maxContentY = totalHeight - height // 90000 - 1130 = 88870
+                    let maxContentY = imageBackend.totalHeight - height // 90000 - 1130 = 88870
                     let clampedY = Math.max(0, Math.min(contentY, maxContentY))
                     return Math.floor(clampedY / chunkHeight)
                 }
@@ -134,7 +119,7 @@ ApplicationWindow {
                         // Everything computed fresh from the same two inputs.
                         readonly property int _slot: flickable.chunkIndex - 1 + index
                         readonly property int _slotY: (_slot >= 0
-                                                       && (_slot * chunkHeight + chunkHeight) <= totalHeight) ? _slot * chunkHeight : -chunkHeight
+                                                       && (_slot * chunkHeight + chunkHeight) <= imageBackend.totalHeight) ? _slot * chunkHeight : -chunkHeight
 
                         x: 0
                         y: _slot * chunkHeight // position always tracks slot directly
@@ -145,7 +130,7 @@ ApplicationWindow {
                             let s = flickable.chunkIndex - 1 + index
                             let sy = s * chunkHeight
                             if (s < 0 || sy < 0
-                                    || (sy + chunkHeight) > totalHeight)
+                                    || (sy + chunkHeight) > imageBackend.totalHeight)
                                 return ""
                             return "image://chunks/chunk?y=" + sy + "&t=" + s
                         }

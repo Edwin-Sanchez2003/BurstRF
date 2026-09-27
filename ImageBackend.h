@@ -3,6 +3,10 @@
 
 #include <QObject>
 #include <QImage>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QUrl>
+#include <QPainter>
 #include <vector>
 #include <complex>
 #include <cmath>
@@ -18,26 +22,51 @@
 
 class ImageBackend : public QObject {
     Q_OBJECT
+    Q_PROPERTY(qint64 totalHeight READ totalHeight NOTIFY recordingLoaded)
+    Q_PROPERTY(double sampleRate READ sampleRate NOTIFY recordingLoaded)
 public:
     explicit ImageBackend(QObject* parent = nullptr) : QObject(parent) {}
 
+    // Loads a SigMF Metadata file, given a QUrl.
+    Q_INVOKABLE bool loadFile(const QUrl &url) {
+        QMutexLocker lock(&m_mutex);
+        auto rec = std::make_unique<sigmf_io::Recording>(url.toLocalFile().toStdString());
+
+        // TODO: need to have channels be dynamic - hardcoded to 1 for now...
+        m_recording = std::move(rec);
+        m_sampleRate = m_recording->meta.global.sample_rate().value_or(-1.0);
+        m_totalSamples = m_recording->data.size(m_recording->meta.captures(), 1);
+        emit recordingLoaded();
+        return true;
+    }
+
+    qint64 totalHeight() const {
+        if (m_totalSamples < m_fftSize) return 0;
+        return (m_totalSamples - m_fftSize) / m_hopSize + 1;
+    }
+    double sampleRate() const { return m_sampleRate; }
+
     // Called from background thread — must be thread-safe!
-    // Returns a chunk of height `chunkH` starting at pixel row `yOffset`
     QImage generateChunk(int yOffset, int chunkW, int chunkH) {
-        return generatePlaceholder(chunkW, chunkH);
+        QMutexLocker lock(&m_mutex);           // Recording access must be locked
+        if (!m_recording) return generatePlaceholder(chunkW, chunkH);
 
-        //std::vector<std::complex<float>> signal = generateFakeSignal(chunkW, chunkH, 40e6, 0.0f);
+        int64_t hop = m_hopSize, fft = m_fftSize;
+        int64_t sample_start = static_cast<int64_t>(yOffset) * hop;
+        int64_t sample_count = static_cast<int64_t>(chunkH - 1) * hop + fft;
 
-        // TODO: get a reference to the current recording, if populated (ie. user must first select it).
-        // And if it exists, calculate the indices to read from and grab the chunk. If uneven at the end,
-        // pad the image with rows of black for now.
-        /*
-        int64_t sample_start = yOffset;
-        int64_t sample_count = chunkW*chunkH;
-        int64_t channel = 1;
-        std::vector<std::complex<float>> signal = sigmf_io::Recording::get_samples(sample_start, sample_count, channel);
-        return generateSpectrogram(signal, chunkW, chunkH);
-        */
+        int64_t available = m_totalSamples - sample_start;
+        if (available <= 0) return generatePlaceholder(chunkW, chunkH); // past EOF
+        int64_t toRead = std::min(sample_count, available);
+
+        auto signal = m_recording->get_samples<std::complex<float>>(sample_start, toRead, /*channel=*/1);
+        QImage img = generateSpectrogram(signal, chunkW, chunkH);
+
+        if (toRead < sample_count) {
+            // pad the short tail with black rows so the image is still chunkH tall
+            padBottomWithBlack(img, chunkH - (toRead - fft) / hop - 1);
+        }
+        return img;
     }
 
     QImage generatePlaceholder(int chunkW, int chunkH)
@@ -216,6 +245,24 @@ public:
         }
 
         return signal;
+    }
+
+signals:
+    void recordingLoaded();
+
+private:
+    QMutex m_mutex;
+    std::unique_ptr<sigmf_io::Recording> m_recording;
+    double m_sampleRate = 0;
+    int64_t m_totalSamples = 0;
+    int m_fftSize = 1024;   // tune / expose as Q_PROPERTY for zoom later
+    int m_hopSize = 1024;   // == fftSize => no overlap, to start
+
+    static void padBottomWithBlack(QImage &img, int firstBlackRow) {
+        if (firstBlackRow >= img.height()) return;
+        firstBlackRow = std::max(0, firstBlackRow);
+        QPainter p(&img);
+        p.fillRect(0, firstBlackRow, img.width(), img.height() - firstBlackRow, Qt::black);
     }
 };
 

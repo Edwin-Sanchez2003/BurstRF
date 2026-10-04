@@ -1,15 +1,15 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36">
   <diagram name="Page-1" id="gXdXRD-hxSofAkPK0ilU">
-    <mxGraphModel dx="4289" dy="1749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="3188" dy="1014" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="spiaGc8N6B3giQx-SNpL-42" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="spiaGc8N6B3giQx-SNpL-21">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-43" connectable="0" parent="spiaGc8N6B3giQx-SNpL-42" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="SigMFBackend CRUDS SigMFDataset&lt;div&gt;from User Input from Frontend.&lt;/div&gt;" vertex="1">
+        <mxCell id="spiaGc8N6B3giQx-SNpL-43" connectable="0" parent="spiaGc8N6B3giQx-SNpL-42" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="SigMFBackend CRUDS SigMFRecording&lt;div&gt;from User Input to Frontend.&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="0.2799" y="1" as="geometry">
-            <mxPoint x="-1" y="-28" as="offset" />
+            <mxPoint x="175" y="-12" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-48" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="spiaGc8N6B3giQx-SNpL-33">
@@ -76,7 +76,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-6" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Backend (C++)&lt;/h1&gt;&lt;p&gt;The compute-intensive parts of the program - manages a relationship with the SigMF Dataset file, computes Spectrograms, and produces QImages for the main view to see.&lt;/p&gt;" vertex="1">
-          <mxGeometry height="120" width="350" x="290" as="geometry" />
+          <mxGeometry height="100" width="350" x="290" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-7" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Frontend (QML)&lt;/h1&gt;&lt;p&gt;The visual display for the user - handles user interactions and communicates with the backend to notify it of user input when needed.&lt;/p&gt;" vertex="1">
           <mxGeometry height="120" width="400" x="920" as="geometry" />
@@ -117,19 +117,7 @@
         <mxCell id="spiaGc8N6B3giQx-SNpL-20" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Frontend States&lt;/span&gt;&lt;/h1&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 12px; font-weight: normal;&quot;&gt;There are a few valid states that we can be in.&lt;/span&gt;&lt;/h1&gt;&lt;p&gt;* Blank Spectrogram (No Dataset selected) -&amp;gt; this is the initial state. No data is displayed.&lt;/p&gt;&lt;p&gt;* Populated Spectrogram (A Dataset is selected) -&amp;gt; this happens once the proper information is communicated from the frontend to the backend &amp;amp; back on how data should be displayed.&lt;/p&gt;&lt;p&gt;* Failed Spectrogram (A dataset fails to load/crashes at runtime) -&amp;gt; the program warns the user that something catastrophic went wrong and tells the user.&amp;nbsp;&lt;/p&gt;" vertex="1">
           <mxGeometry height="220" width="520" x="910" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-44" edge="1" parent="1" source="spiaGc8N6B3giQx-SNpL-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="spiaGc8N6B3giQx-SNpL-25">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="-100" y="230" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-45" connectable="0" parent="spiaGc8N6B3giQx-SNpL-44" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="SigMFDataset initializes a&amp;nbsp;&lt;div&gt;SigMFDataFile to manage access&lt;/div&gt;&lt;div&gt;to raw IQ data.&lt;/div&gt;" vertex="1">
-          <mxGeometry relative="1" x="0.3855" y="-2" as="geometry">
-            <mxPoint x="-43" y="-58" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-21" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SigMFDataset" vertex="1">
+        <mxCell id="spiaGc8N6B3giQx-SNpL-21" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SigMFRecording" vertex="1">
           <mxGeometry height="86" width="160" x="330" y="157" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-22" parent="spiaGc8N6B3giQx-SNpL-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
@@ -139,18 +127,6 @@
           <mxGeometry height="8" width="160" y="52" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-24" parent="spiaGc8N6B3giQx-SNpL-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
-          <mxGeometry height="26" width="160" y="60" as="geometry" />
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-25" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SigMFDataFile" vertex="1">
-          <mxGeometry height="86" width="160" x="-180" y="40" as="geometry" />
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-26" parent="spiaGc8N6B3giQx-SNpL-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
-          <mxGeometry height="26" width="160" y="26" as="geometry" />
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-27" parent="spiaGc8N6B3giQx-SNpL-25" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
-          <mxGeometry height="8" width="160" y="52" as="geometry" />
-        </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-28" parent="spiaGc8N6B3giQx-SNpL-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
           <mxGeometry height="26" width="160" y="60" as="geometry" />
         </mxCell>
         <mxCell id="spiaGc8N6B3giQx-SNpL-29" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SpectrogramBuilder" vertex="1">
@@ -247,11 +223,14 @@
         <mxCell id="spiaGc8N6B3giQx-SNpL-50" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="ChunkSpectrogramResponse&amp;nbsp;knows of SigMFBackend, and makes a call to the SigMFDataset with a yOffset to get a chunk of spectrogram.&lt;div&gt;(should check if SigMFDataset object exists, as it could possibly NOT exist... return nothing? something? if it doesn&#39;t.&lt;/div&gt;" vertex="1">
           <mxGeometry height="121" width="250" x="250" y="690" as="geometry" />
         </mxCell>
-        <mxCell id="spiaGc8N6B3giQx-SNpL-51" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="SigMFDataset knows of SigMFDataFile (where it pulls the IQ from using the yOffset and the hardcoded chunkWidth and chunkHeight) and SpectrogramBuilder (which knows the default spectrogram parameters and can give IQ to build a spectrogram as a QImage) and returns the QImage to the callee." vertex="1">
+        <mxCell id="spiaGc8N6B3giQx-SNpL-51" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="SigMFBackend knows how to use the SpectrogramBuilder and SigMFRecording together to read the correct IQ data from file and generate image chunks on the fly, using initial parameters the SPectrogramBuilder is configured with." vertex="1">
           <mxGeometry height="118" width="250" y="24" as="geometry" />
         </mxCell>
         <mxCell id="BPabmzHj7sxv_MmH5qd7-9" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Spectrogram Builder&lt;/h1&gt;&lt;p&gt;The purpose of spectrogram Builder is to generate a spectrogram as a QImage from any given vector of IQ samples. It must be first configured with common Spectrogram parameters, such as sampleRate, nperseg, noverlap, and nfft.&lt;/p&gt;&lt;p&gt;* The spectrogram builder need to be able to be configured with spectrogram related parameters.&lt;/p&gt;&lt;p&gt;* The spectrogram builder needs to be able to generate a spectrogram given those parameters, and store them to a QImage.&lt;/p&gt;&lt;p&gt;* The spectrogram builder needs to be able to return the frequency center of any bin given a bin index.&lt;/p&gt;" vertex="1">
           <mxGeometry height="260" width="550" x="-840" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="xemcDbsquqUXzXl-UEN1-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;TODO&lt;/h1&gt;&lt;p&gt;* Start by implementing SpectrogramBuilder. Render out to png files to validate spectrogram settings are working properly using test script.&lt;/p&gt;&lt;p&gt;* Do the math to calculate what to render &amp;amp; how from the viewport. How do you know which spectrogram to render?&lt;/p&gt;" vertex="1">
+          <mxGeometry height="200" width="380" x="-50" y="870" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

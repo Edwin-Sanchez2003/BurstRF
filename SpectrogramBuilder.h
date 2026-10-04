@@ -10,6 +10,16 @@
  *
  * Builds spectrogram chunks as QImages given a vector of complex samples,
  * using the given parameters.
+ *
+ * TODO:
+ * Add:
+ * * Struct to hold most settings.
+ * * Window (Hann, Blackman-Harris)
+ * * Colormap (256-entry look-up table viridis, inferno.
+ * * Color scale (dynamic range) - find the min/max power, use as the scale. needs to be member variables so things can be adjusted later.
+ * * Epsilon - added before applying the log function so 0 doesn't map to infinity.
+ * * Image dimensions should be fixed-sized, based on the builder params. Let other outside components resize the image for the screen.
+ * * Orientation - allows you to pick between horizontal or vertical orientations.
  */
 
 class SpectrogramBuilder

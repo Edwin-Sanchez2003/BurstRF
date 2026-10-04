@@ -12,7 +12,7 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
-# ── FetchContent for libsigmf ─────────────────────────────────────────────────
+# ── FetchContent ──────────────────────────────────────────────────────────────
 include(FetchContent)
 
 # Cache FetchContent downloads so offline builds work after first configure
@@ -21,27 +21,6 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "" FORCE)
 # Disable warnings-as-errors globally for all fetched deps
 set(CMAKE_COMPILE_WARNING_AS_ERROR OFF CACHE BOOL "" FORCE)
 
-# Also explicitly tell flatbuffers not to build as werror
-set(FLATBUFFERS_WERROR OFF CACHE BOOL "" FORCE)
-
-# Tell libsigmf to use system-installed flatbuffers and nlohmann-json
-# (requires: sudo dnf install  nlohmann-json-devel )
-# flatbuffers-devel flatbuffers-compiler -> don't work, have to let libsigmf pull the dependency.
-set(USE_SYSTEM_JSON        ON   CACHE BOOL "" FORCE)
-set(USE_SYSTEM_FLATBUFFERS OFF  CACHE BOOL "" FORCE)
-
-FetchContent_Declare(
-    libsigmf
-    GIT_REPOSITORY https://github.com/SigMF/libsigmf.git
-    GIT_TAG        fc8f6e8346c4fc8a5440b97045de10271e0ab94e     # Pin to a commit hash for reproducibility.
-    GIT_SHALLOW    TRUE                                         # Only fetch latest, saves time/space
-)
-FetchContent_MakeAvailable(libsigmf)
-
-# Patch bundled flatbuffers stl_emulation.h - const member assignment
-# breaks on GCC 13+ with -Wtemplate-body
-include(patches/fix_flatbuffers_stl_emulation.cmake)
-# ─────────────────────────────────────────────────────────────────────────────
 
 # ── FetchContent for sigmf_io ─────────────────────────────────────────────────
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)   # don't build sigmf_io's test suite as a subproject
@@ -98,8 +77,6 @@ set_target_properties(appBurstRF PROPERTIES
 
 target_link_libraries(appBurstRF
     PRIVATE Qt6::Quick
-            libsigmf                # libsigmf target
-            flatbuffers             # flatbuffers is needed at link time per their README
             kissfft::kissfft-float  # kissfft for std::complex<float>
             sigmf_io::sigmf_io
 )

@@ -1,6 +1,7 @@
 #ifndef SPECTROGRAMBUILDER_H
 #define SPECTROGRAMBUILDER_H
 
+#include <cstdint>
 #include <vector>
 #include <complex>
 #include <QImage>
@@ -25,6 +26,33 @@
 class SpectrogramBuilder
 {
 public:
+
+    // Whether the output spectrogram should be a horizontal scroll or vertical scroll.
+    enum class Orientation
+    {
+        HORIZONTAL,
+        VERTICAL
+    };
+
+    struct Params
+    {
+    public:
+        double sample_rate = 1.0;
+        unsigned int nperseg = 1024;
+        unsigned int noverlap = 512; // TODO: make this set by a const function initialized as half nperseg.
+        unsigned int nfft = 1024;   // TODO: make this set as nperseg by default, must be greater than or equal to nperseg.
+        std::string window_type = "Hann"; // TODO: implement Hann & Blackman-Harris window functions.
+        double epsilon = 0.0001;    // TODO: pick a good default value to avoid log-forced infinities...
+        double floor_db = 0.0;  // TODO: make a function to compute floor & ceil db. Also, pick decent defaults.
+        double ceil_db = 0.0;
+        Orientation orientation = Orientation::VERTICAL; // Default is Waterfall plot.
+        double bin_reduction_ratio = 1.0; // When nfft is much wider than the visual plot, average or max to merge fft bins to not lose some signals.
+        // TODO: Colormap? Not sure how to do that...
+    };
+
+public:
+    // TODO: write constructors with the major members defined, and use SpectrogramBuilder::Params implicitly.
+    // Catch-all constructor that just takes in a SpectrogramBuilder::Params struct.
     SpectrogramBuilder(double sampleRate);
     SpectrogramBuilder(double sampleRate, unsigned int nperseg, unsigned int noverlap, unsigned int nfft);
 
@@ -32,6 +60,7 @@ public:
     QImage generateSpectrogram(const std::vector<std::complex<double>>& samples);
 
     // Helper to identify what frequency a certain image index corresponds to.
+    // NOTE: depending on scaling in actual viewer, may not be accurate...
     double binIndexToFrequencyCenter(const unsigned int binIndex);
 
     /*

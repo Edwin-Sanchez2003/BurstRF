@@ -7,80 +7,13 @@
 #include <kissfft.hh>
 
 
-SpectrogramBuilder::SpectrogramBuilder(double sampleRate)
-: nperseg(SpectrogramBuilder::DEFAULT_NPERSEG),
-  noverlap(0),
-  nfft(SpectrogramBuilder::DEFAULT_NPERSEG)
-{
-    this->setSampleRate(sampleRate);
-}
+SpectrogramBuilder::SpectrogramBuilder(Params params)
+    : params_(params)
+{}
 
 
-SpectrogramBuilder::SpectrogramBuilder(double sampleRate, unsigned int nperseg, unsigned int noverlap, unsigned int nfft)
-{
-    this->setSampleRate(sampleRate);
-    this->setParams(nperseg, noverlap, nfft);
-}
-
-
-void SpectrogramBuilder::setSampleRate(double sampleRate)
-{
-    // sample rate cannot be negative; throw an error.
-    if (sampleRate <= 0.0) throw std::invalid_argument("Sample rate must be positive.");
-    this->sampleRate = sampleRate;
-}
-
-
-void SpectrogramBuilder::setParams(unsigned int nperseg, unsigned int noverlap, unsigned int nfft)
-{
-    // nperseg must be greater than zero (at least one).
-    // If not, silently replace with 1024.
-    if (nperseg <= 0)
-    {
-        this->nperseg = SpectrogramBuilder::DEFAULT_NPERSEG;
-    }
-
-    // noverlap must be between [0, nperseg).
-    // Replace with max valid value if above threshold.
-    if (noverlap >= this->nperseg)
-    {
-        this->noverlap = this->nperseg - 1;
-    }
-
-    // nfft must be greater than or equal to nperseg.
-    // if not, replace with nperseg
-    if (nfft < this->nperseg)
-    {
-        this->nfft = this->nperseg;
-    }
-}
-
-
-double SpectrogramBuilder::getSampleRate() const
-{
-    return this->sampleRate;
-}
-
-
-unsigned int SpectrogramBuilder::getNoverlap() const
-{
-    return this->noverlap;
-}
-
-
-unsigned int SpectrogramBuilder::getNperseg() const
-{
-    return this->nperseg;
-}
-
-
-unsigned int SpectrogramBuilder::getNfft() const
-{
-    return this->nfft;
-}
-
-
-QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples)
+// sample_rate: rate at which samples were captured. Needed to compute bins.
+QImage SpectrogramBuilder::generateSpectrogram(const double sample_rate, const std::vector<std::complex<double>>& samples)
 {
     unsigned int numRows = (samples.size() + this->nfft - 1) / this->nfft;
 

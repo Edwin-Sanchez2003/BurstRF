@@ -59,17 +59,21 @@ public:
 public:
     // TODO: write constructors with the major members defined, and use SpectrogramBuilder::Params implicitly.
     // Catch-all constructor that just takes in a SpectrogramBuilder::Params struct.
-    explicit SpectrogramBuilder(Params params = Params());
+    SpectrogramBuilder();
+    explicit SpectrogramBuilder(Params params);
 
-    Params SpectrogramBuilder::getParams() const { return this->params_; }
-    void SpectrogramBuilder::setParams(Params params) { this->params_ = params; }
+    Params getParams() const { return this->params_; }
+    void setParams(Params params) { this->params_ = params; }
 
     // generates a spectrogram using the configured member variables.
-    QImage generateSpectrogram(const double sample_rate, const std::vector<std::complex<double>>& samples);
+    QImage generateSpectrogram(const std::vector<std::complex<double>>& samples);
 
     // Helper to identify what frequency a certain image index corresponds to.
     // NOTE: depending on scaling in actual viewer, may not be accurate...
-    double binIndexToFrequencyCenter(const unsigned int binIndex);
+    double binIndexToFrequencyCenter(const unsigned int bin_index, const double sample_rate);
+
+    // helper function to save the spectrogram for independent evaluation.
+    bool saveAsPNG(const QImage& image, const QString& path);
 
 private:
     Params params_;

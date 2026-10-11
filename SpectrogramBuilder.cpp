@@ -3,7 +3,7 @@
 #include <QImage>
 #include <QString>
 #include <QDebug>
-#include <kissfft.hh>
+#include <kiss_fft.h>
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -22,50 +22,64 @@ SpectrogramBuilder::SpectrogramBuilder(Params params)
 
 
 // re-write this, but as straight-forward as possible.
+// NOTE: What are valid return values? Empty Image? etc...
+// TODO: integrate other Param values: noverlap, nfft, etc...
 QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples)
 {
-    // 1. Validate
-    const size_t nperseg = this->params_.nperseg;
-    if (nperseg == 0 || samples.size() < nperseg) {
-        qWarning() << "Not enough samples for one segment:" << samples.size() << "<" << nperseg;
-        return QImage();
-    }
+    // Calculate output image dimensions -> nperseg (width) x rows (height)
+    // rows = samples.size() / nperseg (ceiling division so sample values are not missed).
+    const size_t width = this->params_.nperseg; // also the column count
+    const size_t height = samples.size() / width + (samples.size() % width != 0 ? 1 : 0); // also the row count
 
-    // No overlap yet: segments are back to back, so hop == nperseg.
-    const size_t num_segments = samples.size() / nperseg;
+    // Build an Image Buffer with this size.
+    QImage spectrogram(width, height, QImage::Format_RGB32);
 
-    // 2. FFT each segment
-    kissfft<double> fft(static_cast<int>(nperseg), false);
-    std::vector<std::complex<double>> out(nperseg);
+    // Initialize kissfft params
+    std::vector<kiss_fft_cpx> in(width); // input sample buffer
+    std::vector<kiss_fft_cpx> out(width); // output sample buffer
+    // Arguments: FFT size, inverse flag (0 = forward), no custom memory, no size output.
+    kiss_fft_cfg cfg = kiss_fft_alloc(width, /*inverse=*/0, nullptr, nullptr); // configures fft params.
 
-    // Waterfall layout: width = frequency bins, height = time (row 0 is the oldest segment).
-    QImage image(static_cast<int>(nperseg), static_cast<int>(num_segments),
-                 QImage::Format_Grayscale8);
+    // Set image pixel values based on fft output & color map.
+    // t = 0 at top, time increases downward.
+    for (size_t t = 0; t < height; ++t)
+    {
+        // start index for samples slice
+        const size_t start = t * width;
 
-    const double floor_db = this->params_.floor_db;
-    const double span = std::max(this->params_.ceil_db - floor_db, 1e-9);
-    const double scale = 1.0 / static_cast<double>(nperseg); // so a bin-centered full-scale tone reads ~0 dB
+        // Copy the slice of samples into `in`, converting each std::complex<double>
+        // to a kiss_fft_cpx. Zero-pad if the slice runs past the end of samples.
+        for (size_t i = 0; i < width; ++i)
+        {
+            std::complex<double> s = (start + i < samples.size())
+                ? samples[start + i]
+                : std::complex<double>{};
+            in[i].r = static_cast<kiss_fft_scalar>(s.real());
+            in[i].i = static_cast<kiss_fft_scalar>(s.imag());
+        }
 
-    for (size_t seg = 0; seg < num_segments; ++seg) {
-        fft.transform(samples.data() + seg * nperseg, out.data());
+        // performs fft on the in vector we just populated, and puts the fft values in out.
+        kiss_fft(cfg, in.data(), out.data());
 
-        uchar* row = image.scanLine(static_cast<int>(seg));
-        for (size_t bin = 0; bin < nperseg; ++bin) {
-            // 3. Power -> dB
-            const double power = std::norm(out[bin]) * scale * scale;
-            const double db = 10.0 * std::log10(power + this->params_.epsilon);
+        // perform fft shift to get correct placement of frequency bins
+        // negative frequencies on the left and positive on the right, centered on bin 0.
+        std::rotate(out.begin(), out.begin() + (width + 1) / 2, out.end());
 
-            // 4. dB -> 0..255, clamped to [floor_db, ceil_db]
-            const double t = std::clamp((db - floor_db) / span, 0.0, 1.0);
-
-            // fftshift: put DC in the middle of the row
-            row[(bin + nperseg / 2) % nperseg] = static_cast<uchar>(std::lround(t * 255.0));
+        // QImage.scanLine(t) grabs a pointer to a row of pixels (ie. one fft's worth of pixels).
+        QRgb *line = reinterpret_cast<QRgb*>(spectrogram.scanLine(t));
+        for (size_t f = 0; f < width; ++f) {                   // f = 0 is left (low frequency)
+            double mag = std::hypot(out[f].r, out[f].i);    // compute the magnitude of the complex fft output
+            // line[f] = colormap(mag);                     // convert the magnitude to a color based on the color map.
+            // color for magnitude of bin f at time t
+            line[f] = qRgb(r, g, b);
         }
     }
-    return image;
+
+    return spectrogram;
 }
 
 
+// TODO: is this correct, if I don't provide the center frequency as a param? What exactly is being computed here?...
 double SpectrogramBuilder::binIndexToFrequencyCenter(const unsigned int bin_index, const double sample_rate)
 {
     if (bin_index >= this->params_.effective_nfft()) throw std::invalid_argument("binIndex must be less than the max index value, nfft.");

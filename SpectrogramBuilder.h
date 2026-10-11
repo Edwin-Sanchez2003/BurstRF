@@ -21,6 +21,10 @@
  * * Epsilon - added before applying the log function so 0 doesn't map to infinity.
  * * Image dimensions should be fixed-sized, based on the builder params. Let other outside components resize the image for the screen.
  * * Orientation - allows you to pick between horizontal or vertical orientations.
+ *
+ * NOTE: This may need to evolve into a spectrogram class - if a user wants to edit spectrogram settings on-the-fly,
+ *      then we will need a buffer of the spectrogram output so we can re-compute the image without re-running an FFT...
+ *      Memory vs. speed problem...
  */
 
 class SpectrogramBuilder
@@ -34,24 +38,25 @@ public:
     // When nfft is much wider than the visual plot, average or max to merge fft bins to not lose some signals.
     enum class BinReduction { NONE, MAX, AVERAGE };
 
+    // TODO: Force parameters to be initialized to valid values at construction
     struct Params
     {
-        unsigned int nperseg = 1024;                // Number of samples that get processed per FFT computation.
-        std::optional<unsigned int> noverlap;       // Number of samples to overlap each FFT computation. (unset -> nperseg / 2)
-        std::optional<unsigned int> nfft;           // Size of FFT if zero-padding is desired, otherwise same as nperseg. (unset -> nperseg)
+        size_t nperseg = 1024;                // Number of samples that get processed per FFT computation.
+        std::optional<size_t> noverlap;       // Number of samples to overlap each FFT computation. (unset -> nperseg / 2)
+        std::optional<size_t> nfft;           // Size of FFT if zero-padding is desired, otherwise same as nperseg. (unset -> nperseg)
         WindowType window_type = WindowType::HANN;
         double epsilon = 1e-12;                     // -120 dB floor before the log
-        double floor_db = -100.0;
-        double ceil_db = 0.0;
+        double floor_db = 0.0;
+        double ceil_db = 100.0;
         bool auto_range = false;                    // if true, floor/ceil are computed from data
         Orientation orientation = Orientation::VERTICAL;
-        unsigned int bin_reduction_factor = 1;      // merge N adjacent bins; 1 = off
+        size_t bin_reduction_factor = 1;      // merge N adjacent bins; 1 = off
         BinReduction bin_reduction_mode = BinReduction::NONE;
 
         // Resolved values (these replace your TODO comments)
-        unsigned int effective_noverlap() const { return noverlap.value_or(nperseg / 2); }
-        unsigned int effective_nfft() const     { return std::max(nfft.value_or(nperseg), nperseg); }
-        unsigned int hop() const                { return nperseg - effective_noverlap(); }
+        size_t effective_noverlap() const { return noverlap.value_or(nperseg / 2); }
+        size_t effective_nfft() const     { return std::max(nfft.value_or(nperseg), nperseg); }
+        size_t hop() const                { return nperseg - effective_noverlap(); }
 
         // TODO: Colormap? Not sure how to do that...
     };
@@ -67,6 +72,13 @@ public:
 
     // generates a spectrogram using the configured member variables.
     QImage generateSpectrogram(const std::vector<std::complex<double>>& samples);
+
+    // Compute initial db scale values, so that spectrogram color scaling works visually.
+    // NOTE: This should end up a function on Params...
+    // NOTE: Should make another version that is given sample indices, so we can calculate
+    // across multiple chunks of a file without reading the whole file into memory...
+    // TODO: should set this->params_.floor_db, this->params_.ceil_db values.
+    void computeDbScale(const std::vector<std::complex<double>>& samples);
 
     // Helper to identify what frequency a certain image index corresponds to.
     // NOTE: depending on scaling in actual viewer, may not be accurate...

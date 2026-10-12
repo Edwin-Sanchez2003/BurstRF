@@ -3,6 +3,9 @@ This application is meant to be an MVP SigMF annotation editor.
 
 ## TODO
 
+* fix file naming convention to match sigmf_io.
+* fix namespacing to the burstrf equivalent of sigmf_io.
+
 * generated half of 0.1 - need to understand properly before continuing.
 * ~Add in File Select button for dataset.~
 * ~libsigmf integration.~

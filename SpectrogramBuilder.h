@@ -1,6 +1,8 @@
 #ifndef SPECTROGRAMBUILDER_H
 #define SPECTROGRAMBUILDER_H
 
+#include <array>
+#include <QRgb>
 #include <cstdint>
 #include <vector>
 #include <complex>
@@ -37,20 +39,25 @@ public:
     enum class WindowType { NONE, HANN, BLACKMANHARRIS };
     // When nfft is much wider than the visual plot, average or max to merge fft bins to not lose some signals.
     enum class BinReduction { NONE, MAX, AVERAGE };
+    // Colormap enumerations - helps map certain dB power values to colors for the spectrogram.
+    enum class ColorMap { VIRIDIS, PLASMA, INFERNO, MAGMA, JET, GREY };
 
     // TODO: Force parameters to be initialized to valid values at construction
+    // TODO: support setting values past ceil_db to zero, so that it hides high-power signals???
     struct Params
     {
-        size_t nperseg = 1024;                // Number of samples that get processed per FFT computation.
-        std::optional<size_t> noverlap;       // Number of samples to overlap each FFT computation. (unset -> nperseg / 2)
-        std::optional<size_t> nfft;           // Size of FFT if zero-padding is desired, otherwise same as nperseg. (unset -> nperseg)
+        size_t nperseg = 1024;                  // Number of samples that get processed per FFT computation.
+        std::optional<size_t> noverlap;         // Number of samples to overlap each FFT computation. (unset -> nperseg / 2)
+        std::optional<size_t> nfft;             // Size of FFT if zero-padding is desired, otherwise same as nperseg. (unset -> nperseg)
         WindowType window_type = WindowType::HANN;
-        double epsilon = 1e-12;                     // -120 dB floor before the log
-        double floor_db = 0.0;
-        double ceil_db = 100.0;
-        bool auto_range = false;                    // if true, floor/ceil are computed from data
+        double epsilon = 1e-12;                 // -120 dB floor before the log
+        double floor_db = 40.0;               // the lowest dB value allowed - everything above gets rounded up to this value.
+        double ceil_db = 80.0;                   // the highest dB value allowed - everything above gets rounded down to this value.
+        bool auto_range = false;                // if true, floor/ceil are computed from the data.
+        bool reverse_color_map = false;         // inverses indices for color maps to flip coloring.
+        ColorMap colormap = ColorMap::VIRIDIS;  // specifies a certain colormap to use when generating spectrograms.
         Orientation orientation = Orientation::VERTICAL;
-        size_t bin_reduction_factor = 1;      // merge N adjacent bins; 1 = off
+        size_t bin_reduction_factor = 1;        // merge N adjacent bins; 1 = off
         BinReduction bin_reduction_mode = BinReduction::NONE;
 
         // Resolved values (these replace your TODO comments)
@@ -79,6 +86,9 @@ public:
     // across multiple chunks of a file without reading the whole file into memory...
     // TODO: should set this->params_.floor_db, this->params_.ceil_db values.
     void computeDbScale(const std::vector<std::complex<double>>& samples);
+
+    // gets the corresponding color given a dB value
+    QRgb colormap(double db) const;
 
     // Helper to identify what frequency a certain image index corresponds to.
     // NOTE: depending on scaling in actual viewer, may not be accurate...

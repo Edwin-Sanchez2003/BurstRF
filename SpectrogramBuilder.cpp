@@ -9,6 +9,7 @@
 #include <complex>
 #include <vector>
 #include <stdexcept>
+#include "colormaps.h"
 
 
 SpectrogramBuilder::SpectrogramBuilder()
@@ -67,15 +68,33 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
 
         // QImage.scanLine(t) grabs a pointer to a row of pixels (ie. one fft's worth of pixels).
         QRgb *line = reinterpret_cast<QRgb*>(spectrogram.scanLine(t));
-        for (size_t f = 0; f < width; ++f) {                   // f = 0 is left (low frequency)
-            double mag = std::hypot(out[f].r, out[f].i);    // compute the magnitude of the complex fft output
-            // line[f] = colormap(mag);                     // convert the magnitude to a color based on the color map.
-            // color for magnitude of bin f at time t
-            line[f] = qRgb(r, g, b);
+        for (size_t f = 0; f < width; ++f) {                        // f = 0 is left (low frequency)
+            double re = out[f].r / width;
+            double im = out[f].i / width;
+            double power = re * re + im * im;                                   // power = magnitude squared, no sqrt
+            double db    = 10.0 * std::log10(power + this->params_.epsilon);    // convert to decibel scale
+            line[f] = colormap(db);     // color for magnitude of bin f at time t
         }
     }
 
     return spectrogram;
+}
+
+
+// converts a dB value to an RGB color value.
+QRgb SpectrogramBuilder::colormap(double db) const
+{
+    // TODO: rather than handle a bad range, make Params throw/handle a bad range by itself.
+    const double span = std::max(params_.ceil_db - params_.floor_db, this->params_.epsilon);
+    double t = (db - params_.floor_db) / span;
+
+    if (std::isnan(t))          // clamp() doesn't handle NaN; a bad index would read out of bounds
+        t = 0.0;
+    t = std::clamp(t, 0.0, 1.0);
+
+    // TODO add correct mapping to actual colormaps, currently hardcoded to VIRIDIS...
+    constexpr size_t kLastIndex = colormaps::VIRIDIS.size() - 1;   // 255
+    return colormaps::VIRIDIS[static_cast<size_t>(std::lround(t * kLastIndex))];
 }
 
 

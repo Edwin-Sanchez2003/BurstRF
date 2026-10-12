@@ -5,6 +5,8 @@ This application is meant to be an MVP SigMF annotation editor.
 
 * fix file naming convention to match sigmf_io.
 * fix namespacing to the burstrf equivalent of sigmf_io.
+* Refactor Spectrogram code - break into subroutines.
+    - make setters for Params!
 
 * generated half of 0.1 - need to understand properly before continuing.
 * ~Add in File Select button for dataset.~

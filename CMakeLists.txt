@@ -61,8 +61,9 @@ qt_add_qml_module(appBurstRF
         SOURCES ImageBackend.h
         SOURCES ChunkImageResponse.h
         SOURCES ChunkImageProvider.h
-        SOURCES SpectrogramBuilder.h SpectrogramBuilder.cpp
+        SOURCES spectrogram_builder.h spectrogram_builder.cpp
         SOURCES colormaps.h
+        SOURCES params.h params.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

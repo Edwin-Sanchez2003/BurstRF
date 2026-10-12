@@ -3,9 +3,12 @@
 
 #include <array>
 #include <QRgb>
+
+namespace burstrf {
+
 namespace colormaps {
 
-std::array<QRgb, 256> VIRIDIS {
+constexpr std::array<QRgb, 256> VIRIDIS {
     qRgb(68, 1, 84),
     qRgb(68, 2, 86),
     qRgb(69, 4, 87),
@@ -265,5 +268,7 @@ std::array<QRgb, 256> VIRIDIS {
 };
 
 }   // end colormap namespace
+
+} // end burstrf namespace
 
 #endif // COLORMAPS_H

@@ -100,8 +100,8 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
             return sorted[k];
         };
 
-        this->params_.floor_db = percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db();    // low percentile minus margin
-        this->params_.ceil_db  = percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db();      // high percentile plus margin
+        this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());    // low percentile minus margin
+        this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());      // high percentile plus margin
         qDebug() << "Floor dB: " << this->params_.floor_db() << '\n';
         qDebug() << "Ceil dB: " << this->params_.ceil_db() << '\n';
     }
@@ -126,8 +126,8 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
 QRgb SpectrogramBuilder::colormap(double db) const
 {
     // TODO: rather than handle a bad range, make Params throw/handle a bad range by itself.
-    const double span = std::max(params_.ceil_db - params_.floor_db, this->params_.epsilon());
-    double t = (db - params_.floor_db) / span;
+    const double span = std::max(params_.ceil_db() - params_.floor_db(), this->params_.epsilon());
+    double t = (db - params_.floor_db()) / span;
 
     if (std::isnan(t))          // clamp() doesn't handle NaN; a bad index would read out of bounds
         t = 0.0;

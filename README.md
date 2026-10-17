@@ -7,6 +7,8 @@ This application is meant to be an MVP SigMF annotation editor.
 * fix namespacing to the burstrf equivalent of sigmf_io.
 * Refactor Spectrogram code - break into subroutines.
     - make setters for Params!
+    - later, need to update params value-setting to consider all values when setting a parameter - if a user sets values out-of-order, the guards may not catch an issue (user sets noverlap before setting nperseg, and the values drift out-of-sync).
+        - check at UI level or at the Params object level?...
 
 * generated half of 0.1 - need to understand properly before continuing.
 * ~Add in File Select button for dataset.~
@@ -24,6 +26,7 @@ This application is meant to be an MVP SigMF annotation editor.
     - resizing shouldn't mess up view (image should not be scaled ever).
     - ...others?
     
+* Maybe for later... a useful abstraction is "User-filled Struct/Values". This is a class that defines convenience functions related to  both throwing errors and returning std::expected<> values. Inherit from this class to build a struct that can either throw when an invalid value is set or return a std::expected value. This would help with implementing any classes that require user input, helping define an interface that provides easy ways to handle invalid user input.
 
 ### Initial Rendering
 * Focus should NOT be trying to render a file -> it should be to render captures within a file, since captures contain the frequency key:

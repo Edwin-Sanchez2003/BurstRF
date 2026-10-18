@@ -58,9 +58,7 @@ qt_add_qml_module(appBurstRF
     QML_FILES
         Main.qml
         RESOURCES README.md
-        SOURCES ImageBackend.h
-        SOURCES ChunkImageResponse.h
-        SOURCES ChunkImageProvider.h
+        SOURCES burstrf_backend.h
         SOURCES spectrogram_builder.h spectrogram_builder.cpp
         SOURCES colormaps.h
         SOURCES params.h params.cpp

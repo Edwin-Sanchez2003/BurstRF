@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36">
   <diagram name="Page-1" id="gXdXRD-hxSofAkPK0ilU">
-    <mxGraphModel dx="2850" dy="783" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2997" dy="883" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -309,6 +309,49 @@
         </mxCell>
         <mxCell id="YJRLXPJ0vunUzYqp42Gl-23" parent="YJRLXPJ0vunUzYqp42Gl-21" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
           <mxGeometry height="8" width="210" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Spectrogram View States" vertex="1">
+          <mxGeometry height="300" width="460" x="510" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-2" parent="qDsD6uOBuJ8ynhODl2c5-1" style="rounded=0;whiteSpace=wrap;html=1;" value="SigMF Dataset View State" vertex="1">
+          <mxGeometry height="60" width="120" x="310" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-3" parent="qDsD6uOBuJ8ynhODl2c5-1" style="rounded=0;whiteSpace=wrap;html=1;" value="Empty State" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-4" edge="1" parent="qDsD6uOBuJ8ynhODl2c5-1" source="qDsD6uOBuJ8ynhODl2c5-2" style="curved=1;curveGeometry=1;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="qDsD6uOBuJ8ynhODl2c5-3" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.456" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="60" />
+              <mxPoint x="100" y="70" />
+            </Array>
+            <mxPoint x="500" y="160" as="sourcePoint" />
+            <mxPoint x="550" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-5" parent="qDsD6uOBuJ8ynhODl2c5-1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="User Closes Editing of a File" vertex="1">
+          <mxGeometry height="30" width="170" x="145" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-7" edge="1" parent="qDsD6uOBuJ8ynhODl2c5-1" source="qDsD6uOBuJ8ynhODl2c5-2" style="curved=1;curveGeometry=1;endArrow=none;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startArrow=classic;startFill=1;endFill=0;" target="qDsD6uOBuJ8ynhODl2c5-3" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.5168" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="250" />
+              <mxPoint x="120" y="250" />
+            </Array>
+            <mxPoint x="380" y="140" as="sourcePoint" />
+            <mxPoint x="90" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-8" connectable="0" parent="qDsD6uOBuJ8ynhODl2c5-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="User Selects a SigMF Metadata File" vertex="1">
+          <mxGeometry relative="1" x="-0.1499" as="geometry">
+            <mxPoint x="-21" y="41" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-9" parent="qDsD6uOBuJ8ynhODl2c5-1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" value="Spectrogram View&lt;div&gt;Gets Initialized&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="120" x="170" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="qDsD6uOBuJ8ynhODl2c5-12" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;State Transition&lt;/h1&gt;&lt;p&gt;1. [STATE: Empty State]: User selects SigMF Metadata File.&lt;/p&gt;&lt;p&gt;2. The SigMF Metadata&#39;s size() and sample_rate, along with SpectrogramBuilder parameters, are used to calculate the size of the view, ie. width (curently nperseg) and height (ceil(dataset.size() / width) of the dataset.&lt;/p&gt;&lt;p&gt;3. A function is used to map the current viewport range to sections of the dataset. (scroll index -&amp;gt; sample window).&lt;/p&gt;&lt;p&gt;3. Given a currently fixed chunk_size, QImages are generated to fill the current view , + 1 before and after the edge of the screen.&lt;/p&gt;&lt;p&gt;4. [SigMF Dataset View]: The view is populated by the current QImages within view.&lt;/p&gt;&lt;p&gt;5. A new dataset is selected - the view is invalidated &amp;amp; set back to the empty state (step 1). This means first clearing any related caches for objects used to populate the view before re-constructing it.&lt;/p&gt;" vertex="1">
+          <mxGeometry height="398" width="350" x="1000" y="1190" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

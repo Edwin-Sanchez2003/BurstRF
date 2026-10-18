@@ -6,7 +6,7 @@ This application is meant to be an MVP SigMF annotation editor.
 * fix file naming convention to match sigmf_io.
 * fix namespacing to the burstrf equivalent of sigmf_io.
 * Refactor Spectrogram code - break into subroutines.
-    - make setters for Params!
+    - ~make setters for Params!~
     - later, need to update params value-setting to consider all values when setting a parameter - if a user sets values out-of-order, the guards may not catch an issue (user sets noverlap before setting nperseg, and the values drift out-of-sync).
         - check at UI level or at the Params object level?...
 

@@ -32,13 +32,16 @@ ApplicationWindow {
                 console.log("Failed to load file!")
             } else {
                 console.log("Successfully loaded: " + selectedFile)
+                backend.refreshChunk()
             }
         }
     }
 
     SpectrogramItem {
         id: spectrogram
-        anchors.fill: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        z: 0
     }
 
     Connections {
@@ -47,4 +50,6 @@ ApplicationWindow {
             spectrogram.setImage(img)
         }
     }
+
+    Component.onCompleted: backend.refreshChunk()
 }

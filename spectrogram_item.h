@@ -19,6 +19,10 @@ public:
     Q_INVOKABLE void setImage(const QImage &img)
     {
         m_image = img;
+        setImplicitWidth(img.width());
+        setImplicitHeight(img.height());
+        setWidth(img.width());
+        setHeight(img.height());
         update();   // schedules a call to paint()
     }
 

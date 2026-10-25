@@ -28,7 +28,7 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         nameFilters: ["SigMF Meta files (*.sigmf-meta)", "All files (*)"]
         onAccepted: {
-            if (!burstRFBackend.loadFile(selectedFile)) {
+            if (!backend.loadFile(selectedFile)) {
                 console.log("Failed to load file!")
             } else {
                 console.log("Successfully loaded: " + selectedFile)
@@ -36,13 +36,15 @@ ApplicationWindow {
         }
     }
 
-    Image {
-        id: test_spectrogram
-        // TODO: Implement Image Provider... Qt6-ism...
-        source: "trimmedSamples(2)_auto_0__1_000_000.png"
+    SpectrogramItem {
+        id: spectrogram
         anchors.fill: parent
-        fillMode: Image.Pad
-        cache: false
-        visible: true
+    }
+
+    Connections {
+        target: backend
+        function onChunkReady(img) {
+            spectrogram.setImage(img)
+        }
     }
 }

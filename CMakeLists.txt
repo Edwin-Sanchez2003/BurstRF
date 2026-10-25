@@ -56,12 +56,14 @@ qt_add_executable(appBurstRF
 qt_add_qml_module(appBurstRF
     URI BurstRF
     QML_FILES
-        Main.qml
-        RESOURCES README.md
+            Main.qml
+    QML_FILES
         SOURCES burstrf_backend.h
         SOURCES spectrogram_builder.h spectrogram_builder.cpp
         SOURCES colormaps.h
         SOURCES params.h params.cpp
+        SOURCES
+        SOURCES spectrogram_item.h
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

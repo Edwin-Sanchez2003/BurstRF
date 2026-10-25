@@ -21,7 +21,6 @@ public:
 
     // Loads a SigMF Metadata file, given a QUrl.
     Q_INVOKABLE bool loadFile(const QUrl &url) {
-        QMutexLocker lock(&m_mutex);
         auto rec = std::make_unique<sigmf_io::Recording>(url.toLocalFile().toStdString());
 
         // TODO: need to have channels be dynamic - hardcoded to 1 for now...
@@ -30,16 +29,23 @@ public:
         return true;
     }
 
+    // Called by QML at startup and after a file is picked.
+    Q_INVOKABLE void refreshChunk()
+    {
+        QImage img = m_recording ? generateChunk()
+                                 : generatePlaceholder(1024, 512);
+        emit chunkReady(img);
+    }
+
     // Called from background thread — must be thread-safe!
-    Q_INVOKABLE QImage generateChunk() {
-        QMutexLocker lock(&m_mutex);           // Recording access must be locked
+    QImage generateChunk() {
         int64_t chunk_width = 1024;
-        int64_t chunk_height = 2048;
+        int64_t chunk_height = 512;
         if (!m_recording) return generatePlaceholder(chunk_width, chunk_height);
 
         int64_t channel = 1;
         int64_t sample_start = 0;
-        int64_t sample_count = 400'000;
+        int64_t sample_count = 200'000;
         int64_t available = m_recording->size(channel) - sample_start;
         if (available <= 0) return generatePlaceholder(chunk_width, chunk_height); // past EOF
         int64_t toRead = std::min(sample_count, available);
@@ -95,9 +101,9 @@ public:
 
 signals:
     void recordingLoaded();
+    void chunkReady(const QImage &img);
 
 private:
-    QMutex m_mutex;
     std::unique_ptr<sigmf_io::Recording> m_recording;
     burstrf::SpectrogramBuilder spectrogram_builder;
 };

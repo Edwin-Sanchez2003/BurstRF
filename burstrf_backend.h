@@ -7,6 +7,7 @@
 #include <QMutexLocker>
 #include <QUrl>
 #include <QPainter>
+#include <QDebug>
 #include <vector>
 #include <complex>
 #include <cmath>
@@ -39,29 +40,53 @@ public:
         return true;
     }
 
-    // Called by QML at startup and after a file is picked.
-    Q_INVOKABLE void refreshChunk()
-    {
-        QImage img = m_recording ? generateChunk(2'400'000)
-                                 : generatePlaceholder(1024, 1024);
-        emit chunkReady(img);
+    // Called by QML to determine the size of the spectrogram flickable
+    Q_INVOKABLE int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
+
+    Q_INVOKABLE int64_t spectrogramChunkHeight() const {
+        int64_t chunk_width = this->spectrogramWidth();
+        return this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
     }
 
+    Q_INVOKABLE int64_t spectrogramChunkCount() const
+    {
+        if (!m_recording) return 3;
+
+        int64_t rec_size = this->m_recording->size(1);
+        int64_t chunkCount = rec_size / this->chunk_size + (rec_size % this->chunk_size != 0 ? 1 : 0);
+        return chunkCount;
+    }
+
+    // Called by QML to get a specific chunk generated from the spectrogram
     // Called from background thread — must be thread-safe!
-    QImage generateChunk(int64_t sample_start) {
-        int64_t chunk_width = 1024;
-        int64_t chunk_height = 1024;
-        if (!m_recording) return generatePlaceholder(chunk_width, chunk_height);
+    Q_INVOKABLE void generateChunk(int64_t chunk_index) {
+        // If no recording loaded, generate a placeholder the size of the expected chunk.
+        int64_t chunk_width = this->spectrogramWidth();
+        int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
+
+        // If no recording, return placeholder
+        if (!m_recording)
+        {
+            emit chunkReady(chunk_index, generatePlaceholder(this->spectrogramWidth(), chunk_height));
+            return;
+        }
+
+        // convert the chunk_index to a sample_start, based on the chunk_size
+        int64_t sample_start = this->chunk_size * chunk_index;
 
         int64_t channel = 1;
         int64_t available = m_recording->size(channel) - sample_start;
-        if (available <= 0) return generatePlaceholder(chunk_width, chunk_height); // past EOF
+        if (available <= 0) {
+            emit chunkReady(chunk_index, generatePlaceholder(chunk_width, chunk_height)); // past EOF
+            return;
+        }
+
         int64_t toRead = std::min(this->chunk_size, available);
 
         std::vector<std::complex<double>> samples = m_recording->get_samples<std::complex<double>>(sample_start, toRead, channel);
         QImage img = this->spectrogram_builder.generateSpectrogram(samples);
 
-        return img;
+        emit chunkReady(chunk_index, img);
     }
 
     QImage generatePlaceholder(int chunkW, int chunkH)
@@ -109,7 +134,7 @@ public:
 
 signals:
     void recordingLoaded();
-    void chunkReady(const QImage &img);
+    void chunkReady(int64_t index, const QImage &img);
 
 private:
     int64_t chunk_size = 600'000;

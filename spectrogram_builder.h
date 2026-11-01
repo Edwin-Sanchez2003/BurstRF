@@ -57,6 +57,8 @@ public:
     //       Will need to untangle later...
     void computeSetDbScale(const std::vector<std::complex<double>>& samples);
 
+    int64_t width() const { return this->params_.nperseg(); }
+
     // gets the corresponding color given a dB value
     QRgb colormap(double db) const;
 

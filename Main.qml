@@ -53,6 +53,8 @@ ApplicationWindow {
 
     Component.onCompleted: backend.refreshChunk()
 
+
+    /*
     Flickable {
         id: flick
         width: parent.width / 2
@@ -83,4 +85,5 @@ ApplicationWindow {
             }
         }
     }
+    */
 }

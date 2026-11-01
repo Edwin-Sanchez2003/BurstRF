@@ -27,6 +27,14 @@ public:
 
         // TODO: need to have channels be dynamic - hardcoded to 1 for now...
         m_recording = std::move(rec);
+
+
+        // TEMP: immediately calculate db scale at initial load
+        int64_t channel = 1;
+        int64_t available = m_recording->size(channel);
+        int64_t toRead = std::min(this->chunk_size, available);
+        std::vector<std::complex<double>> samples = m_recording->get_samples<std::complex<double>>(0, toRead, channel);
+        spectrogram_builder.computeSetDbScale(samples);
         emit recordingLoaded();
         return true;
     }
@@ -34,23 +42,21 @@ public:
     // Called by QML at startup and after a file is picked.
     Q_INVOKABLE void refreshChunk()
     {
-        QImage img = m_recording ? generateChunk()
+        QImage img = m_recording ? generateChunk(2'400'000)
                                  : generatePlaceholder(1024, 1024);
         emit chunkReady(img);
     }
 
     // Called from background thread — must be thread-safe!
-    QImage generateChunk() {
+    QImage generateChunk(int64_t sample_start) {
         int64_t chunk_width = 1024;
         int64_t chunk_height = 1024;
         if (!m_recording) return generatePlaceholder(chunk_width, chunk_height);
 
         int64_t channel = 1;
-        int64_t sample_start = 0;
-        int64_t sample_count = 600'000;
         int64_t available = m_recording->size(channel) - sample_start;
         if (available <= 0) return generatePlaceholder(chunk_width, chunk_height); // past EOF
-        int64_t toRead = std::min(sample_count, available);
+        int64_t toRead = std::min(this->chunk_size, available);
 
         std::vector<std::complex<double>> samples = m_recording->get_samples<std::complex<double>>(sample_start, toRead, channel);
         QImage img = this->spectrogram_builder.generateSpectrogram(samples);
@@ -106,6 +112,7 @@ signals:
     void chunkReady(const QImage &img);
 
 private:
+    int64_t chunk_size = 600'000;
     std::unique_ptr<sigmf_io::Recording> m_recording;
     burstrf::SpectrogramBuilder spectrogram_builder;
 };

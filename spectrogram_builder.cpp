@@ -48,7 +48,7 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
     // Arguments: FFT size, inverse flag (0 = forward), no custom memory, no size output.
     kiss_fft_cfg cfg = kiss_fft_alloc(width, /*inverse=*/0, nullptr, nullptr); // configures fft params.
 
-    // used to pick a floor & ceiling value.
+    // used to map spectrogram fft row/col values to colors based on dB.
     std::vector<double> db_values(width * height);   // dB for every pixel in a 1D array.
     db_values.reserve(width * height);
 
@@ -89,23 +89,6 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
     // release the kiss_fft_cfg... may move this to a destructor later...
     kiss_fft_free(cfg);
 
-    // compute floor/ceil from the stored dB values
-    if (!db_values.empty())
-    {
-        // converts a percentile to a dB value.
-        auto percentile = [&](double p) {
-            std::vector<double> sorted = db_values;   // copy so db_values keeps its row order
-            size_t k = static_cast<size_t>(p * (sorted.size() - 1));
-            std::nth_element(sorted.begin(), sorted.begin() + k, sorted.end());
-            return sorted[k];
-        };
-
-        this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());    // low percentile minus margin
-        this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());      // high percentile plus margin
-        qDebug() << "Floor dB: " << this->params_.floor_db() << '\n';
-        qDebug() << "Ceil dB: " << this->params_.ceil_db() << '\n';
-    }
-
     // Set image pixel values based on fft output & color map.
     // t = 0 at top, time increases downward.
     // ---- Pass 2: color the pixels ----
@@ -116,10 +99,67 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
         for (size_t f = 0; f < width; ++f)
             // t * width -> gets us to the right row,
             // + f -> gets us to the right column.
-            line[f] = colormap(db_values[t * width + f]);
+            line[f] = this->colormap(db_values[t * width + f]);
     }
 
     return spectrogram;
+}
+
+// sets floor_db and ceil_db values to scale spectrogram values.
+void SpectrogramBuilder::computeSetDbScale(const std::vector<std::complex<double>>& samples)
+{
+    const size_t width = this->params_.nperseg();
+    if (width == 0 || samples.empty())
+        return;
+
+    const size_t frames = samples.size() / width + (samples.size() % width != 0 ? 1 : 0);
+
+    // Collect dB for every bin of every frame (same math as generateSpectrogram).
+    std::vector<double> db_values;
+    db_values.reserve(frames * width);
+
+    std::vector<kiss_fft_cpx> in(width);
+    std::vector<kiss_fft_cpx> out(width);
+    kiss_fft_cfg cfg = kiss_fft_alloc(width, /*inverse=*/0, nullptr, nullptr);
+
+    for (size_t t = 0; t < frames; ++t)
+    {
+        const size_t start = t * width;
+        for (size_t i = 0; i < width; ++i)
+        {
+            std::complex<double> s = (start + i < samples.size())
+            ? samples[start + i]
+            : std::complex<double>{};
+            in[i].r = static_cast<kiss_fft_scalar>(s.real());
+            in[i].i = static_cast<kiss_fft_scalar>(s.imag());
+        }
+
+        kiss_fft(cfg, in.data(), out.data());
+
+        // The FFT shift doesn't change the set of values, so it can be skipped here.
+        for (size_t f = 0; f < width; ++f)
+        {
+            double re = out[f].r / width;
+            double im = out[f].i / width;
+            double power = re * re + im * im;
+            db_values.push_back(10.0 * std::log10(power + this->params_.epsilon()));
+        }
+    }
+
+    kiss_fft_free(cfg);
+
+    // Percentile of the collected dB values. nth_element reorders the vector,
+    // which is fine since we only need order statistics.
+    auto percentile = [&](double p) {
+        size_t k = static_cast<size_t>(p * (db_values.size() - 1));
+        std::nth_element(db_values.begin(), db_values.begin() + k, db_values.end());
+        return db_values[k];
+    };
+
+    this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());
+    this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());
+    qDebug() << "Floor dB (computeSetDbScale): " << this->params_.floor_db() << '\n';
+    qDebug() << "Ceil dB (computeSetDbScale): " << this->params_.ceil_db() << '\n';
 }
 
 // converts a dB value to an RGB color value.
@@ -133,7 +173,7 @@ QRgb SpectrogramBuilder::colormap(double db) const
         t = 0.0;
     t = std::clamp(t, 0.0, 1.0);
 
-    // TODO add correct mapping to actual colormaps, currently hardcoded to VIRIDIS...
+    // TODO: add correct mapping to actual colormaps, currently hardcoded to VIRIDIS...
     constexpr size_t kLastIndex = colormaps::VIRIDIS.size() - 1;   // 255
     return colormaps::VIRIDIS[static_cast<size_t>(std::lround(t * kLastIndex))];
 }

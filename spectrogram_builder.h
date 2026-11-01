@@ -55,7 +55,7 @@ public:
     // TODO: should set this->params_.floor_db, this->params_.ceil_db values.
     // NOTE: Currently integrated with generateSpectrogram - a tightly coupled step with the algorithm currently...
     //       Will need to untangle later...
-    //void computeDbScale(const std::vector<std::complex<double>>& samples);
+    void computeSetDbScale(const std::vector<std::complex<double>>& samples);
 
     // gets the corresponding color given a dB value
     QRgb colormap(double db) const;

@@ -28,11 +28,11 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         nameFilters: ["SigMF Meta files (*.sigmf-meta)", "All files (*)"]
         onAccepted: {
-            if (!backend.loadFile(selectedFile)) {
-                console.log("Failed to load file!")
-            } else {
+            if (backend.loadFile(selectedFile)) {
                 console.log("Successfully loaded: " + selectedFile)
                 backend.refreshChunk()
+            } else {
+                console.log("Failed to load file!")
             }
         }
     }
@@ -52,4 +52,35 @@ ApplicationWindow {
     }
 
     Component.onCompleted: backend.refreshChunk()
+
+    Flickable {
+        id: flick
+        width: parent.width / 2
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        contentWidth: width
+        contentHeight: column.implicitHeight
+
+        clip: true
+
+        Column {
+            id: column
+            width: flick.width
+
+            Repeater {
+                model: 50
+                Rectangle {
+                    width: column.width
+                    height: 60
+                    color: index % 2 ? "lightsteelblue" : "lightgray"
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Item " + index
+                    }
+                }
+            }
+        }
+    }
 }

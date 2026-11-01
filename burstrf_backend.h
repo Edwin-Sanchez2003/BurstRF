@@ -14,6 +14,8 @@
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
 
+// TODO: Move implementations to .cpp file...
+
 class BurstRFBackend : public QObject {
     Q_OBJECT
 public:
@@ -33,19 +35,19 @@ public:
     Q_INVOKABLE void refreshChunk()
     {
         QImage img = m_recording ? generateChunk()
-                                 : generatePlaceholder(1024, 512);
+                                 : generatePlaceholder(1024, 1024);
         emit chunkReady(img);
     }
 
     // Called from background thread — must be thread-safe!
     QImage generateChunk() {
         int64_t chunk_width = 1024;
-        int64_t chunk_height = 512;
+        int64_t chunk_height = 1024;
         if (!m_recording) return generatePlaceholder(chunk_width, chunk_height);
 
         int64_t channel = 1;
         int64_t sample_start = 0;
-        int64_t sample_count = 200'000;
+        int64_t sample_count = 600'000;
         int64_t available = m_recording->size(channel) - sample_start;
         if (available <= 0) return generatePlaceholder(chunk_width, chunk_height); // past EOF
         int64_t toRead = std::min(sample_count, available);

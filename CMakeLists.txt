@@ -5,7 +5,7 @@ cmake_policy(SET CMP0071 NEW)  # AUTOMOC/AUTOUIC skip GENERATED files cleanly
 
 project(BurstRF VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)              # sigmf_io requires C++23; libsigmf only needs C++17
+set(CMAKE_CXX_STANDARD 23)              # sigmf_io requires C++23
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
@@ -62,7 +62,6 @@ qt_add_qml_module(appBurstRF
         SOURCES spectrogram_builder.h spectrogram_builder.cpp
         SOURCES colormaps.h
         SOURCES params.h params.cpp
-        SOURCES
         SOURCES spectrogram_item.h
 )
 

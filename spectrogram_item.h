@@ -30,7 +30,7 @@ public:
     {
         if (m_image.isNull())
             return;
-        painter->drawImage(boundingRect(), m_image);   // stretches to the item's size
+        painter->drawImage(QPointF(0, 0), m_image);   // draws at natural size (starting from Item's top-left corner), no scaling
     }
 
 private:

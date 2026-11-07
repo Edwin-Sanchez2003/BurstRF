@@ -28,6 +28,12 @@
  * NOTE: This may need to evolve into a spectrogram class - if a user wants to edit spectrogram settings on-the-fly,
  *      then we will need a buffer of the spectrogram output so we can re-compute the image without re-running an FFT...
  *      Memory vs. speed problem...
+ *
+ *  * Needs to manage chunk indice mapping to sample_starts of chunks here?
+ *  * Should we honestly just couple this with a Recording object itself,
+ *    rather than route just with samples? This makes the most sense to me...
+ *    -> Couple initialization of key parameters to a recording object.
+ *    -> Couple initiating chunk processing to frontend (ie. chunk_indices - facilitated by BurstRFBackend).
  */
 
 namespace burstrf {

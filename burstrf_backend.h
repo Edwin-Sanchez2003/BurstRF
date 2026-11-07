@@ -16,6 +16,13 @@
 #include "spectrogram_builder.h"
 
 // TODO: Move implementations to .cpp file...
+/*
+ * * Migrate stateful values to Q_PROPERTIES to better sync frontend display.
+ * * With this, we can establish an invariant for "no file" where these properties
+ *   have default values, reducing chance for invalid state - default chunk_size, chunk_count, width, etc. etc.
+ * * Do propper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.
+ *
+ */
 
 class BurstRFBackend : public QObject {
     Q_OBJECT
@@ -29,7 +36,6 @@ public:
         // TODO: need to have channels be dynamic - hardcoded to 1 for now...
         m_recording = std::move(rec);
 
-
         // TEMP: immediately calculate db scale at initial load
         int64_t channel = 1;
         int64_t available = m_recording->size(channel);
@@ -40,14 +46,18 @@ public:
         return true;
     }
 
-    // Called by QML to determine the size of the spectrogram flickable
-    Q_INVOKABLE int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
+    // Width of the spectrogram... Remove?
+    int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
 
+    // Used by QML frontend to get the height of a single chunk of the spectrogram for chunk display.
+    // TODO: Make this a Q_PROPERTY -> that way it can automatically update/adjust when the chunk height changes.
     Q_INVOKABLE int64_t spectrogramChunkHeight() const {
         int64_t chunk_width = this->spectrogramWidth();
         return this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
     }
 
+    // Used by QML frontend to know how many spectrogram chunk objects to put in the scrollable window (flickable).
+    // TODO: make this a Q_PROPERTY as well...
     Q_INVOKABLE int64_t spectrogramChunkCount() const
     {
         if (!m_recording) return 3;
@@ -58,7 +68,8 @@ public:
     }
 
     // Called by QML to get a specific chunk generated from the spectrogram
-    // Called from background thread — must be thread-safe!
+    // Call from background thread — must be thread-safe! (Recording is the only worry-point here).
+    // TODO: change the frontend binding to be a signal w/chunk_index, so this can run on a separate thread from the display thread!
     Q_INVOKABLE void generateChunk(int64_t chunk_index) {
         // If no recording loaded, generate a placeholder the size of the expected chunk.
         int64_t chunk_width = this->spectrogramWidth();
@@ -89,6 +100,10 @@ public:
         emit chunkReady(chunk_index, img);
     }
 
+
+    // TODO: couple with spectrogram builder so we can have a consistent size with a current recording when waiting for a
+    // chunk to load. Should still allow for it to be called w/out a Recording object, as we need to set placeholders for "no file"
+    // scenario.
     QImage generatePlaceholder(int chunkW, int chunkH)
     {
         QImage img(chunkW, chunkH, QImage::Format_RGB32);

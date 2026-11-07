@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36">
-  <diagram name="Page-1" id="gXdXRD-hxSofAkPK0ilU">
-    <mxGraphModel dx="3034" dy="908" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" pages="2">
+  <diagram name="Structure" id="gXdXRD-hxSofAkPK0ilU">
+    <mxGraphModel dx="3875" dy="1482" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -355,6 +355,113 @@
         </mxCell>
         <mxCell id="wFndLRgUJ_T_dTPqdYMa-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Loading Process&lt;/h1&gt;&lt;p&gt;1. SpectrogramItem initialized in QML.&lt;/p&gt;&lt;p&gt;2. Image is NULL -&amp;gt; nothing painted to screen.&lt;/p&gt;&lt;p&gt;3. User clicks &quot;load file&quot; and select a file.&lt;/p&gt;&lt;p&gt;4. Backend loads the recording, and if successfull, tells it to refresh the chunk.&lt;/p&gt;&lt;p&gt;5. refresh chunk generates a chunk if the recording exists and gets the built image.&lt;/p&gt;&lt;p&gt;6. refresh chunk emits the chunkReady signal, passing a reference to the image.&lt;/p&gt;&lt;p&gt;7. Main.qml connection waits for backend to emit onChunkReady signal, then uses the image to set the spectrogram Item with that image.&lt;/p&gt;&lt;p&gt;8. SpectrogramItem sets the image, sets the width and height based on the image size, then schedules the Item to be painted.&lt;/p&gt;&lt;p&gt;9. Next GUI refresh, SpectrogramItem paints the image onto the screen.&lt;/p&gt;" vertex="1">
           <mxGeometry height="390" width="330" x="-715" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="XZ5pOtfRIzmuC49iKRZ3-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Notes&lt;/h1&gt;&lt;p&gt;&lt;b&gt;QGuiApplication:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;* Manages the event loop.&lt;/p&gt;&lt;p&gt;* Manages screens, windows, fonts, palettes, the clipboard, input methods, and holds application-wide settings.&lt;/p&gt;&lt;p&gt;* Must exist before any GUI object is created, and outlives all other objects.&lt;/p&gt;&lt;p&gt;* Knows nothing about QML (decoupled from the QML window representation).&lt;/p&gt;&lt;p&gt;&lt;b&gt;QQmlApplicationEngine:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;* QML runtime.&lt;/p&gt;&lt;p&gt;* Parses &amp;amp; compiles QML files.&lt;/p&gt;&lt;p&gt;* Creates object trees from the QML representation.&lt;/p&gt;&lt;p&gt;* Runs the JavaScript written in the frontend.&lt;/p&gt;&lt;p&gt;* Resolves imports.&lt;/p&gt;&lt;p&gt;* Manages the QML type system.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;Exposing C++ to QML:&lt;/i&gt;&lt;/p&gt;&lt;p&gt;&lt;i&gt;&lt;br&gt;&lt;/i&gt;* Context Properties: rootContext()-&amp;gt;setContextProperty(&quot;name&quot;, &amp;amp;obj) makes &quot;name&quot; a global name in QML. Simple, but not visible to tooling?&lt;/p&gt;&lt;p&gt;* Registered Types: Mark a class with QML_ELEMENT (or call qmlRegisterType) and QML can instantiate it directly (import type).&lt;/p&gt;&lt;p&gt;* Singletons: QML_SINGLETON (or qmlRegisterSingletonInstance) gives one shared instance accessible by name (same object everywhere).&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="550" width="460" x="-20" y="1150" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="P083uSk-mxDBpn68XPff" name="Current Implementation UML">
+    <mxGraphModel dx="1414" dy="963" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vGi-nx9khn6VXWbB0a_a-10" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="BurstRFBackend : QObject" vertex="1">
+          <mxGeometry height="354" width="360" x="1460" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="vGi-nx9khn6VXWbB0a_a-11" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- int64_t chunk_size" vertex="1">
+          <mxGeometry height="26" width="360" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-14" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- std::unique_ptr&amp;lt;sigmf_io::Recording&amp;gt; m_recording" vertex="1">
+          <mxGeometry height="26" width="360" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-15" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- burstrf::SpectrogramBuilder spectrogram_builder" vertex="1">
+          <mxGeometry height="26" width="360" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="vGi-nx9khn6VXWbB0a_a-12" parent="vGi-nx9khn6VXWbB0a_a-10" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="360" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="vGi-nx9khn6VXWbB0a_a-13" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ explicit BurstRFBackend(QObject* parent)&amp;nbsp;" vertex="1">
+          <mxGeometry height="26" width="360" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-2" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Q_INVOKABLE bool loadFile(const QUrl &amp;amp;url)" vertex="1">
+          <mxGeometry height="26" width="360" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-3" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ int64_t spectrogramWidth() const" vertex="1">
+          <mxGeometry height="26" width="360" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-4" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Q_INVOKABLE int64_t spectrogramChunkHeight() const" vertex="1">
+          <mxGeometry height="26" width="360" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-5" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Q_INVOKABLE int64_t spectrogramChunkCount() const" vertex="1">
+          <mxGeometry height="26" width="360" y="216" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-6" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Q_INVOKABLE void generateChunk(int64_t chunk_index)" vertex="1">
+          <mxGeometry height="26" width="360" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-7" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ QImage generatePlaceholder(int chunkW, int chunkH)" vertex="1">
+          <mxGeometry height="26" width="360" y="268" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-8" parent="vGi-nx9khn6VXWbB0a_a-10" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="Signals" vertex="1">
+          <mxGeometry height="8" width="360" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-9" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ void recordingLoaded()" vertex="1">
+          <mxGeometry height="26" width="360" y="302" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-10" parent="vGi-nx9khn6VXWbB0a_a-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ void chunkReady(int64_t index, const QImage &amp;amp;img)" vertex="1">
+          <mxGeometry height="26" width="360" y="328" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="Interfaces with QML frontend. Responsible for setting up signals/slots as needed, managing the Signal-specific primitives, and generally handles state." vertex="1">
+          <mxGeometry height="60" width="300" x="1460" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-16" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="burstrf::SpectrogramBuilder" vertex="1">
+          <mxGeometry height="86" width="290" x="985" y="84" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-17" parent="iQoSDTN4d9xYqPrcGlrY-16" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
+          <mxGeometry height="26" width="290" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-18" parent="iQoSDTN4d9xYqPrcGlrY-16" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="290" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-19" parent="iQoSDTN4d9xYqPrcGlrY-16" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
+          <mxGeometry height="26" width="290" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-20" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="burstrf::Params" vertex="1">
+          <mxGeometry height="86" width="290" x="970" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-21" parent="iQoSDTN4d9xYqPrcGlrY-20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
+          <mxGeometry height="26" width="290" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-22" parent="iQoSDTN4d9xYqPrcGlrY-20" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="290" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-23" parent="iQoSDTN4d9xYqPrcGlrY-20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
+          <mxGeometry height="26" width="290" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-24" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="SpectrogramItem" vertex="1">
+          <mxGeometry height="86" width="290" x="1450" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-25" parent="iQoSDTN4d9xYqPrcGlrY-24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
+          <mxGeometry height="26" width="290" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-26" parent="iQoSDTN4d9xYqPrcGlrY-24" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="290" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-27" parent="iQoSDTN4d9xYqPrcGlrY-24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
+          <mxGeometry height="26" width="290" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-28" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="burstrf::colormaps" vertex="1">
+          <mxGeometry height="86" width="290" x="550" y="74" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-29" parent="iQoSDTN4d9xYqPrcGlrY-28" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ field: type" vertex="1">
+          <mxGeometry height="26" width="290" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-30" parent="iQoSDTN4d9xYqPrcGlrY-28" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="290" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iQoSDTN4d9xYqPrcGlrY-31" parent="iQoSDTN4d9xYqPrcGlrY-28" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ method(type): type" vertex="1">
+          <mxGeometry height="26" width="290" y="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

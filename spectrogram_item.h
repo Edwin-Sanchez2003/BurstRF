@@ -26,7 +26,7 @@ public:
         update();   // schedules a call to paint()
     }
 
-    void paint(QPainter *painter) override
+    void paint(QPainter* painter) override
     {
         if (m_image.isNull())
             return;

@@ -26,6 +26,12 @@ public:
         update();   // schedules a call to paint()
     }
 
+    // Called from QML. Removes the image (meant to be called when out-of-frame).
+    Q_INVOKABLE void clearImage()
+    {
+        m_image = QImage();
+    }
+
     void paint(QPainter* painter) override
     {
         if (m_image.isNull())

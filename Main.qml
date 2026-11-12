@@ -73,34 +73,39 @@ ApplicationWindow {
                     property int chunkIndex: index
                     property bool requested: false
 
-                    // Request the chunk once, the first time it overlaps the viewport.
-                    function requestIfVisible() {
-                        if (requested)
-                            return
-                        if (y + height > flick.contentY
-                                && y < flick.contentY + flick.height) {
+                    // Keeps the chunk's image in sync with whether it overlaps the viewport.
+                    function updateVisibility() {
+                        const inView = (y + height > flick.contentY)
+                                     && (y < flick.contentY + flick.height)
+
+                        if (inView && !requested) {
                             requested = true
                             backend.generateChunk(chunkIndex)
+                        } else if (!inView && requested) {
+                            requested = false
+                            spectrogram.clearImage()
                         }
                     }
 
-                    onYChanged: requestIfVisible()
-                    Component.onCompleted: requestIfVisible()
+                    onYChanged: updateVisibility()
+                    Component.onCompleted: updateVisibility()
 
                     Connections {
                         target: flick
                         function onContentYChanged() {
-                            chunk.requestIfVisible()
+                            chunk.updateVisibility()
                         }
                         function onHeightChanged() {
-                            chunk.requestIfVisible()
+                            chunk.updateVisibility()
                         }
                     }
 
                     Connections {
                         target: backend
                         function onChunkReady(chunkIndex, img) {
-                            if (chunkIndex === chunk.chunkIndex)
+                            // only set visible image if the chunk is still requested (in view)
+                            if (chunkIndex === chunk.chunkIndex
+                                    && chunk.requested)
                                 spectrogram.setImage(img)
                         }
                     }

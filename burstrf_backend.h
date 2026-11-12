@@ -8,9 +8,13 @@
 #include <QUrl>
 #include <QPainter>
 #include <QDebug>
+#include <QThread>
+#include <QAtomicInt>
+#include <QElapsedTimer>
 #include <vector>
 #include <complex>
 #include <cmath>
+
 
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
@@ -27,10 +31,45 @@
 class BurstRFBackend : public QObject {
     Q_OBJECT
 public:
-    explicit BurstRFBackend(QObject* parent = nullptr) : QObject(parent) {}
+    explicit BurstRFBackend(QObject* parent = nullptr) : QObject(parent) {
+        qRegisterMetaType<int64_t>("int64_t");   // lets queued connections carry int64_t
+        m_worker.moveToThread(&m_thread);
+
+        // Runs on the worker thread. Qt queues each request to it from the GUI thread.
+        connect(this, &BurstRFBackend::requestChunk, &m_worker, [this](int64_t chunk_index) {
+            QElapsedTimer timer;
+            timer.start();
+
+            QImage img;
+            try {
+                img = buildChunk(chunk_index);
+            } catch (const std::exception &e) {
+                qWarning() << "Chunk" << chunk_index << "failed:" << e.what();
+                img = generatePlaceholder(spectrogramWidth(), spectrogramChunkHeight());
+            }
+
+            //qDebug() << "Chunk" << chunk_index << "finished in" << timer.elapsed() << "ms"
+            //         << "| pending after:" << m_pending.loadAcquire() - 1;
+
+            emit chunkReady(chunk_index, img);
+            m_pending.deref();   // always runs, even after an exception
+        });
+
+        m_thread.start();
+    }
+
+    ~BurstRFBackend() override {
+        m_thread.quit();
+        m_thread.wait();   // lets any in-progress chunk finish before members are destroyed
+    }
 
     // Loads a SigMF Metadata file, given a QUrl.
     Q_INVOKABLE bool loadFile(const QUrl &url) {
+        if (m_pending.loadAcquire() > 0) {
+            qWarning() << "Cannot load a file while spectrogram chunks are being generated.";
+            return false;
+        }
+
         auto rec = std::make_unique<sigmf_io::Recording>(url.toLocalFile().toStdString());
 
         // TODO: need to have channels be dynamic - hardcoded to 1 for now...
@@ -67,39 +106,11 @@ public:
         return chunkCount;
     }
 
-    // Called by QML to get a specific chunk generated from the spectrogram
-    // Call from background thread — must be thread-safe! (Recording is the only worry-point here).
-    // TODO: change the frontend binding to be a signal w/chunk_index, so this can run on a separate thread from the display thread!
+    // Called by QML. Queues the work onto the worker thread and returns immediately.
     Q_INVOKABLE void generateChunk(int64_t chunk_index) {
-        // If no recording loaded, generate a placeholder the size of the expected chunk.
-        int64_t chunk_width = this->spectrogramWidth();
-        int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
-
-        // If no recording, return placeholder
-        if (!m_recording)
-        {
-            emit chunkReady(chunk_index, generatePlaceholder(this->spectrogramWidth(), chunk_height));
-            return;
-        }
-
-        // convert the chunk_index to a sample_start, based on the chunk_size
-        int64_t sample_start = this->chunk_size * chunk_index;
-
-        int64_t channel = 1;
-        int64_t available = m_recording->size(channel) - sample_start;
-        if (available <= 0) {
-            emit chunkReady(chunk_index, generatePlaceholder(chunk_width, chunk_height)); // past EOF
-            return;
-        }
-
-        int64_t toRead = std::min(this->chunk_size, available);
-
-        std::vector<std::complex<double>> samples = m_recording->get_samples<std::complex<double>>(sample_start, toRead, channel);
-        QImage img = this->spectrogram_builder.generateSpectrogram(samples);
-
-        emit chunkReady(chunk_index, img);
+        m_pending.ref();
+        emit requestChunk(chunk_index);
     }
-
 
     // TODO: couple with spectrogram builder so we can have a consistent size with a current recording when waiting for a
     // chunk to load. Should still allow for it to be called w/out a Recording object, as we need to set placeholders for "no file"
@@ -147,14 +158,44 @@ public:
         return img;
     }
 
+private:
+    // Runs on the worker thread. Returns the chunk image (or a placeholder).
+    QImage buildChunk(int64_t chunk_index) {
+        // If no recording loaded, generate a placeholder the size of the expected chunk.
+        int64_t chunk_width = this->spectrogramWidth();
+        int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
+
+        // If no recording, return placeholder
+        if (!m_recording)
+            return generatePlaceholder(this->spectrogramWidth(), chunk_height);
+
+        // convert the chunk_index to a sample_start, based on the chunk_size
+        int64_t sample_start = this->chunk_size * chunk_index;
+
+        int64_t channel = 1;
+        int64_t available = m_recording->size(channel) - sample_start;
+        if (available <= 0)
+            return generatePlaceholder(chunk_width, chunk_height); // past EOF
+
+        int64_t toRead = std::min(this->chunk_size, available);
+
+        std::vector<std::complex<double>> samples = m_recording->get_samples<std::complex<double>>(sample_start, toRead, channel);
+        return this->spectrogram_builder.generateSpectrogram(samples);
+    }
+
 signals:
     void recordingLoaded();
     void chunkReady(int64_t index, const QImage &img);
+    void requestChunk(int64_t index);   // internal: GUI -> worker
 
 private:
     int64_t chunk_size = 600'000;
     std::unique_ptr<sigmf_io::Recording> m_recording;
     burstrf::SpectrogramBuilder spectrogram_builder;
+
+    QThread m_thread;        // the single worker thread
+    QObject m_worker;        // lives on m_thread; receives requestChunk
+    QAtomicInt m_pending;    // chunks queued or in progress
 };
 
 #endif // BURSTRF_BACKEND_H

@@ -1,8 +1,8 @@
 #include "spectrogram_builder.h"
 
 #include <QImage>
-#include <QString>
 #include <QDebug>
+#include <QString>
 #include <kiss_fft.h>
 #include <algorithm>
 #include <cmath>
@@ -158,8 +158,6 @@ void SpectrogramBuilder::computeSetDbScale(const std::vector<std::complex<double
 
     this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());
     this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());
-    qDebug() << "Floor dB (computeSetDbScale): " << this->params_.floor_db() << '\n';
-    qDebug() << "Ceil dB (computeSetDbScale): " << this->params_.ceil_db() << '\n';
 }
 
 // converts a dB value to an RGB color value.

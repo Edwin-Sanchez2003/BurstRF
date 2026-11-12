@@ -74,7 +74,7 @@ ApplicationWindow {
                     property bool requested: false
 
                     // Keeps the chunk's image in sync with whether it overlaps the viewport.
-                    readonly property real margin: flick.height // one viewport of buffer
+                    readonly property real margin: flick.height / 2 // one viewport of buffer, total
                     function updateVisibility() {
                         const top = flick.contentY - margin
                         const bottom = flick.contentY + flick.height + margin
@@ -90,7 +90,10 @@ ApplicationWindow {
                     }
 
                     onYChanged: updateVisibility()
-                    Component.onCompleted: updateVisibility()
+                    // Qt.callLater used to avoid chunks being confused as to correct y-location at startup
+                    // When not used, all chunks queue themselves for an image at Recording-loaded (tries to render
+                    // whole file).
+                    Component.onCompleted: Qt.callLater(updateVisibility)
 
                     Connections {
                         target: flick
@@ -126,6 +129,8 @@ ApplicationWindow {
         target: backend
         function onRecordingLoaded() {
             specChunkRepeater.model = backend.spectrogramChunkCount()
+            flick.contentY = 0
+            flick.returnToBounds()
         }
     }
 }

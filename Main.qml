@@ -74,9 +74,11 @@ ApplicationWindow {
                     property bool requested: false
 
                     // Keeps the chunk's image in sync with whether it overlaps the viewport.
+                    readonly property real margin: flick.height // one viewport of buffer
                     function updateVisibility() {
-                        const inView = (y + height > flick.contentY)
-                                     && (y < flick.contentY + flick.height)
+                        const top = flick.contentY - margin
+                        const bottom = flick.contentY + flick.height + margin
+                        const inView = (y + height > top) && (y < bottom)
 
                         if (inView && !requested) {
                             requested = true

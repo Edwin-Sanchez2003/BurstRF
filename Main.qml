@@ -113,10 +113,18 @@ ApplicationWindow {
         }
     }
 
+    readonly property int spectroBorderWidth: 5
+    readonly property color spectroBorder: "#8a7560"
+
     Rectangle {
-        id: spectroBg
-        anchors.fill: flick // always matches the Flickable's current size
+        id: spectroFrame
+        width: flick.width + 2 * root.spectroBorderWidth
+        height: flick.height + 2 * root.spectroBorderWidth
+        anchors.centerIn: flick
+
         color: root.bgSpectro
+        border.color: root.spectroBorder
+        border.width: root.spectroBorderWidth
     }
 
     // A scrollable window with which the spectrogram is displayed.
@@ -124,9 +132,9 @@ ApplicationWindow {
         id: flick
         width: Math.min(column.implicitWidth, parent.width)
         anchors.top: parent.top
-        anchors.topMargin: 12
+        anchors.topMargin: 12 + root.spectroBorderWidth
         anchors.bottom: fileNameText.top
-        anchors.bottomMargin: 12
+        anchors.bottomMargin: 12 + root.spectroBorderWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
         contentWidth: column.implicitWidth

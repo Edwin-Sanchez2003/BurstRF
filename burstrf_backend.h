@@ -92,8 +92,8 @@ public:
         return QString::fromStdString(this->m_recording->meta_path());
     }
 
-    // Width of the spectrogram... Remove?
-    int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
+    // so display knows how wide to set the flickable.
+    Q_INVOKABLE int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
 
     // Used by QML frontend to get the height of a single chunk of the spectrogram for chunk display.
     // TODO: Make this a Q_PROPERTY -> that way it can automatically update/adjust when the chunk height changes.

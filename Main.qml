@@ -11,26 +11,90 @@ import QtQuick.Dialogs
     - Spectrogram
 */
 ApplicationWindow {
+    id: root
     width: 1920
     height: 1080
     visible: true
     title: "BurstRF"
 
-    // Dataset Selection Button - used to pick a .sigmf-meta file from a File Dialog.
-    Button {
-        text: "Select SigMF Metadata File"
-        onClicked: fileDialog.open()
+    readonly property color bgWindow: "#1e2127"
+    readonly property color bgSpectro: "#111316"
+    readonly property color btnBg: "#2d333b"
+    readonly property color btnHover: "#3a4250"
+    readonly property color btnPressed: "#252a31"
+    readonly property color textPrimary: "#e6e9ef"
+    readonly property color textMuted: "#aeb7c4"
+    readonly property color accent: "#4c9ef0"
+
+    color: bgWindow
+
+    property int spectroWidth: root.spectroWidth = backend.spectrogramWidth(
+                                   ) // or whatever the backend exposes
+
+    property int firstVisible: 0
+    property int lastVisible: -1
+
+    function updateVisibleRange() {
+        const h = backend.spectrogramChunkHeight()
+        const count = backend.spectrogramChunkCount()
+        if (h <= 0 || count <= 0 || flick.height <= 0) {
+            firstVisible = 0
+            lastVisible = -1
+            return
+        }
+        const buffer = flick.height / 2 // one viewport of buffer on each side
+        firstVisible = Math.max(0, Math.floor((flick.contentY - buffer) / h))
+        lastVisible = Math.min(
+                    count - 1,
+                    Math.floor((flick.contentY + flick.height + buffer) / h))
     }
 
+    Connections {
+        target: flick
+        function onContentYChanged() {
+            root.updateVisibleRange()
+        }
+        function onHeightChanged() {
+            root.updateVisibleRange()
+        }
+    }
+
+    // Dataset Selection Button - used to pick a .sigmf-meta file from a File Dialog.
+    Button {
+        id: pickFile
+        text: "Select SigMF Metadata File"
+        onClicked: fileDialog.open()
+
+        contentItem: Text {
+            text: pickFile.text
+            color: root.textPrimary
+            font: pickFile.font
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        background: Rectangle {
+            radius: 4
+            color: pickFile.down ? root.btnPressed : pickFile.hovered ? root.btnHover : root.btnBg
+            border.color: pickFile.activeFocus ? root.accent : "transparent"
+            border.width: 1
+        }
+    }
+
+    // Displays the name of the currently loaded SigMF Recording.
     Text {
         id: fileNameText
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        text: ""
-        font.family: "Helvetica"
+        anchors.right: parent.right
+        anchors.margins: 12
+
+        text: "No File Selected"
+        font.family: "Atkinson Hyperlegible"
         font.pointSize: 14
-        color: "red"
-        z: 1
+        font.weight: Font.Medium
+        color: root.textMuted
+        elide: Text.ElideMiddle // shortens long names in the middle rather than cutting them off
     }
 
     // Creates a file dialog to pick a file from the user's device.
@@ -49,17 +113,24 @@ ApplicationWindow {
         }
     }
 
+    Rectangle {
+        id: spectroBg
+        anchors.fill: flick // always matches the Flickable's current size
+        color: root.bgSpectro
+    }
+
     // A scrollable window with which the spectrogram is displayed.
     Flickable {
         id: flick
-        width: parent.width / 1.5
+        width: Math.min(column.implicitWidth, parent.width)
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.topMargin: 12
+        anchors.bottom: fileNameText.top
+        anchors.bottomMargin: 12
         anchors.horizontalCenter: parent.horizontalCenter
 
-        contentWidth: width
+        contentWidth: column.implicitWidth
         contentHeight: column.implicitHeight
-
         clip: true
 
         Column {
@@ -73,44 +144,31 @@ ApplicationWindow {
                 // scrolls into view and only displays the chunk it asked for.
                 Item {
                     id: chunk
-                    width: column.width
-                    height: backend.spectrogramChunkHeight()
+                    implicitWidth: root.spectroWidth
+                    implicitHeight: backend.spectrogramChunkHeight()
+                    width: implicitWidth
+                    height: implicitHeight
                     clip: true
 
                     property int chunkIndex: index
                     property bool requested: false
+                    readonly property bool inView: index >= root.firstVisible
+                                                   && index <= root.lastVisible
 
-                    // Keeps the chunk's image in sync with whether it overlaps the viewport.
-                    readonly property real margin: flick.height / 2 // one viewport of buffer, total
-                    function updateVisibility() {
-                        const top = flick.contentY - margin
-                        const bottom = flick.contentY + flick.height + margin
-                        const inView = (y + height > top) && (y < bottom)
-
+                    function syncRequest() {
                         if (inView && !requested) {
                             requested = true
-                            backend.generateChunk(chunkIndex)
+                            backend.generateChunk(index)
+                            console.log(">>> Requested chunkIndex: " + chunkIndex)
                         } else if (!inView && requested) {
                             requested = false
                             spectrogram.clearImage()
+                            console.log("<<< Cleared chunkIndex: " + chunkIndex)
                         }
                     }
 
-                    onYChanged: updateVisibility()
-                    // Qt.callLater used to avoid chunks being confused as to correct y-location at startup
-                    // When not used, all chunks queue themselves for an image at Recording-loaded (tries to render
-                    // whole file).
-                    Component.onCompleted: Qt.callLater(updateVisibility)
-
-                    Connections {
-                        target: flick
-                        function onContentYChanged() {
-                            chunk.updateVisibility()
-                        }
-                        function onHeightChanged() {
-                            chunk.updateVisibility()
-                        }
-                    }
+                    onInViewChanged: syncRequest()
+                    Component.onCompleted: syncRequest()
 
                     Connections {
                         target: backend
@@ -138,6 +196,7 @@ ApplicationWindow {
             specChunkRepeater.model = backend.spectrogramChunkCount()
             flick.contentY = 0
             flick.returnToBounds()
+            root.updateVisibleRange()
         }
     }
 }

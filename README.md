@@ -3,6 +3,15 @@ This application is meant to be an MVP SigMF annotation editor.
 
 ## TODO
 
+## file name
+* text box in bottom left corner of screen, for file name.
+* give buffer so it doesn't overlap w/spectrogram.
+
+## axes
+* limit vertical height to have margins on top and bottom of spectrogram.
+
+---
+
 * fix file naming convention to match sigmf_io.
 * fix namespacing to the burstrf equivalent of sigmf_io.
 * Refactor Spectrogram code - break into subroutines.

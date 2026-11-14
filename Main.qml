@@ -22,6 +22,18 @@ ApplicationWindow {
         onClicked: fileDialog.open()
     }
 
+    Text {
+        id: fileNameText
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        text: ""
+        font.family: "Helvetica"
+        font.pointSize: 14
+        color: "red"
+        z: 1
+    }
+
+    // Creates a file dialog to pick a file from the user's device.
     FileDialog {
         id: fileDialog
         title: "Select SigMF Metadata File"
@@ -30,22 +42,17 @@ ApplicationWindow {
         onAccepted: {
             if (backend.loadFile(selectedFile)) {
                 console.log("Successfully loaded: " + selectedFile)
+                fileNameText.text = backend.currentFileName()
             } else {
                 console.log("Failed to load file!")
             }
         }
     }
 
-
-    /*
-      Things I need from the dataset:
-      - spectrogram width
-      - ~~spectrogram height~~
-      - number of chunks
-    */
+    // A scrollable window with which the spectrogram is displayed.
     Flickable {
         id: flick
-        width: parent.width / 2
+        width: parent.width / 1.5
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter

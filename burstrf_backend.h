@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QAtomicInt>
 #include <QElapsedTimer>
+#include <QString>
 #include <vector>
 #include <complex>
 #include <cmath>
@@ -83,6 +84,12 @@ public:
         spectrogram_builder.computeSetDbScale(samples);
         emit recordingLoaded();
         return true;
+    }
+
+    // QML-callable function to get the current recording's file anme.
+    Q_INVOKABLE QString currentFileName() const {
+        if (!m_recording) return QString::fromStdString("");
+        return QString::fromStdString(this->m_recording->meta_path());
     }
 
     // Width of the spectrogram... Remove?

@@ -28,8 +28,8 @@ ApplicationWindow {
 
     color: bgWindow
 
-    property int spectroWidth: root.spectroWidth = backend.spectrogramWidth(
-                                   ) // or whatever the backend exposes
+    property int spectroWidth: root.spectroWidth
+                               = backend.spectrogramWidth // or whatever the backend exposes
 
     property real sampleRateSps: 0
 
@@ -37,8 +37,8 @@ ApplicationWindow {
     property int lastVisible: -1
 
     function updateVisibleRange() {
-        const h = backend.spectrogramChunkHeight()
-        const count = backend.spectrogramChunkCount()
+        const h = backend.spectrogramChunkHeight
+        const count = backend.spectrogramChunkCount
         if (h <= 0 || count <= 0 || flick.height <= 0) {
             firstVisible = 0
             lastVisible = -1
@@ -149,15 +149,14 @@ ApplicationWindow {
 
             Repeater {
                 id: specChunkRepeater
-                model: backend.spectrogramChunkCount()
+                model: backend.spectrogramChunkCount
                 // One delegate per chunk. It requests its own chunk when it
                 // scrolls into view and only displays the chunk it asked for.
                 Item {
                     id: chunk
-                    readonly property int fullHeight: backend.spectrogramChunkHeight()
+                    readonly property int fullHeight: backend.spectrogramChunkHeight
                     // rows before this chunk = index * fullHeight
-                    readonly property int rowsRemaining: backend.totalRows(
-                                                             ) - index * fullHeight
+                    readonly property int rowsRemaining: backend.totalRows - index * fullHeight
                     implicitWidth: root.spectroWidth
                     implicitHeight: Math.min(fullHeight, rowsRemaining)
                     width: implicitWidth
@@ -213,8 +212,8 @@ ApplicationWindow {
         anchors.bottomMargin: 6 // gap between the axis and the spectrogram frame
         anchors.horizontalCenter: spectroFrame.horizontalCenter
 
-        centerHz: backend.getCenterFrequencyHz()
-        sampleRateSps: backend.getSampleRateSps()
+        centerHz: backend.getCenterFrequencyHz
+        sampleRateSps: backend.getSampleRateSps
         targetTicks: 8
     }
 
@@ -273,12 +272,12 @@ ApplicationWindow {
     Connections {
         target: backend
         function onRecordingLoaded() {
-            specChunkRepeater.model = backend.spectrogramChunkCount()
+            specChunkRepeater.model = backend.spectrogramChunkCount
             flick.contentY = 0
             flick.returnToBounds()
             root.updateVisibleRange()
-            root.sampleRateSps = backend.getSampleRateSps()
-            freqAxis.centerHz = backend.getCenterFrequencyHz()
+            root.sampleRateSps = backend.getSampleRateSps
+            freqAxis.centerHz = backend.getCenterFrequencyHz
             freqAxis.sampleRateSps = root.sampleRateSps
         }
     }

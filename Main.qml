@@ -31,6 +31,8 @@ ApplicationWindow {
     property int spectroWidth: root.spectroWidth = backend.spectrogramWidth(
                                    ) // or whatever the backend exposes
 
+    property real sampleRateSps: 0
+
     property int firstVisible: 0
     property int lastVisible: -1
 
@@ -83,10 +85,9 @@ ApplicationWindow {
 
     // Displays the name of the currently loaded SigMF Recording.
     Text {
-        id: fileNameText
+        id: fileDescriptorText
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: parent.right
         anchors.margins: 12
 
         text: "No File Selected"
@@ -106,7 +107,7 @@ ApplicationWindow {
         onAccepted: {
             if (backend.loadFile(selectedFile)) {
                 console.log("Successfully loaded: " + selectedFile)
-                fileNameText.text = backend.currentFileName()
+                fileDescriptorText.text = backend.currentFileDescriptor()
             } else {
                 console.log("Failed to load file!")
             }
@@ -132,10 +133,11 @@ ApplicationWindow {
         id: flick
         width: Math.min(column.implicitWidth, parent.width)
         anchors.top: parent.top
-        anchors.topMargin: 12 + root.spectroBorderWidth
-        anchors.bottom: fileNameText.top
+        anchors.topMargin: 40 + root.spectroBorderWidth
+        anchors.bottom: fileDescriptorText.top
         anchors.bottomMargin: 12 + root.spectroBorderWidth
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: (timeAxis.width + 8) / 2
 
         contentWidth: column.implicitWidth
         contentHeight: column.implicitHeight
@@ -152,8 +154,12 @@ ApplicationWindow {
                 // scrolls into view and only displays the chunk it asked for.
                 Item {
                     id: chunk
+                    readonly property int fullHeight: backend.spectrogramChunkHeight()
+                    // rows before this chunk = index * fullHeight
+                    readonly property int rowsRemaining: backend.totalRows(
+                                                             ) - index * fullHeight
                     implicitWidth: root.spectroWidth
-                    implicitHeight: backend.spectrogramChunkHeight()
+                    implicitHeight: Math.min(fullHeight, rowsRemaining)
                     width: implicitWidth
                     height: implicitHeight
                     clip: true
@@ -193,8 +199,74 @@ ApplicationWindow {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
                     }
-                }
-            }
+                } // end item
+            } // end repeater
+        } // end column
+    } // end flickable
+
+    // X-Axis for the spectrogram
+    FrequencyAxis {
+        id: freqAxis
+        width: spectroFrame.width
+        height: 24
+        anchors.bottom: spectroFrame.top
+        anchors.bottomMargin: 6 // gap between the axis and the spectrogram frame
+        anchors.horizontalCenter: spectroFrame.horizontalCenter
+
+        centerHz: backend.getCenterFrequencyHz()
+        sampleRateSps: backend.getSampleRateSps()
+        targetTicks: 8
+    }
+
+    // Y-Axis for the spectrogram
+    TimeAxis {
+        id: timeAxis
+        width: 64
+        anchors.top: flick.top
+        anchors.bottom: flick.bottom
+        anchors.right: spectroFrame.left
+        anchors.rightMargin: 8
+
+        scrollOffsetPx: flick.contentY
+        viewportPx: flick.height
+        msPerRow: root.sampleRateSps > 0 ? 1000 * root.spectroWidth / root.sampleRateSps : 0
+        targetTicks: 8
+    }
+
+    // vertical scrollbar as another option to interact with spectrogram
+    ScrollBar {
+        id: vbar
+        orientation: Qt.Vertical
+        policy: ScrollBar.AlwaysOn // keep it "active" so the style doesn't fade it
+        visible: flick.visibleArea.heightRatio < 1 // hide only when there's nothing to scroll
+        anchors.top: spectroFrame.top
+        anchors.bottom: spectroFrame.bottom
+        anchors.left: spectroFrame.right
+        anchors.leftMargin: 4 // small gap between the frame and the bar
+
+        // Reflect the flickable's current scroll position and visible fraction
+        size: flick.visibleArea.heightRatio
+        position: flick.visibleArea.yPosition
+
+        // Only move the content while the user is dragging the bar.
+        // Without this check, flick -> bar -> flick would loop.
+        onPositionChanged: {
+            if (pressed)
+                flick.contentY = position * flick.contentHeight
+        }
+
+        // Track behind the thumb
+        background: Rectangle {
+            implicitWidth: 12
+            radius: 6
+            color: root.bgSpectro
+        }
+
+        // Thumb: always drawn at full opacity, brighter while hovered or dragged
+        contentItem: Rectangle {
+            implicitWidth: 12
+            radius: 6
+            color: vbar.pressed ? root.accent : vbar.hovered ? root.textMuted : root.btnHover
         }
     }
 
@@ -205,6 +277,9 @@ ApplicationWindow {
             flick.contentY = 0
             flick.returnToBounds()
             root.updateVisibleRange()
+            root.sampleRateSps = backend.getSampleRateSps()
+            freqAxis.centerHz = backend.getCenterFrequencyHz()
+            freqAxis.sampleRateSps = root.sampleRateSps
         }
     }
 }

@@ -12,10 +12,11 @@
 #include <QAtomicInt>
 #include <QElapsedTimer>
 #include <QString>
+#include <QLocale>
 #include <vector>
 #include <complex>
 #include <cmath>
-
+#include <optional>
 
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
@@ -37,9 +38,12 @@ public:
         m_worker.moveToThread(&m_thread);
 
         // Runs on the worker thread. Qt queues each request to it from the GUI thread.
+        // TODO: make a queue for chunks, so that when a user scrolls far beyond the currently viewed
+        // chunk, the requested chunk is canceled (otherwise a quick scroll make a lot of chunks to display
+        // but the user doesn't actually see them as they've already scrolled past...)
         connect(this, &BurstRFBackend::requestChunk, &m_worker, [this](int64_t chunk_index) {
-            QElapsedTimer timer;
-            timer.start();
+            //QElapsedTimer timer;
+            //timer.start();
 
             QImage img;
             try {
@@ -87,9 +91,37 @@ public:
     }
 
     // QML-callable function to get the current recording's file anme.
-    Q_INVOKABLE QString currentFileName() const {
+    Q_INVOKABLE QString currentFileDescriptor() const
+    {
+        // empty string if there's no recording.
         if (!m_recording) return QString::fromStdString("");
-        return QString::fromStdString(this->m_recording->meta_path());
+
+        // build file descriptor using file path, channel, size, and chunk count
+        std::string file_descriptor = this->m_recording->meta_path();
+        file_descriptor += " | Channel: 1";
+        file_descriptor += " | Samples: " + QLocale("en_US").toString(this->m_recording->size(1)).toStdString();
+        file_descriptor += " | Chunk Count: " + std::to_string(this->spectrogramChunkCount());
+        return QString::fromStdString(file_descriptor);
+    }
+
+    // functions to get needed information for the Frequency Axis
+    Q_INVOKABLE double getCenterFrequencyHz() const
+    {
+        if(!m_recording) return 0.0;
+        std::optional<double> center_freq = m_recording->meta.capture_at(0).frequency();
+        if(center_freq.has_value())
+            return center_freq.value();
+        return 0.0;
+    }
+
+    // functions to get needed information for the Frequency Axis
+    Q_INVOKABLE double getSampleRateSps() const
+    {
+        if(!m_recording) return 1.0;
+        std::optional<double> sample_rate = m_recording->meta.global.sample_rate();
+        if(sample_rate.has_value())
+            return sample_rate.value();
+        return 1.0;
     }
 
     // so display knows how wide to set the flickable.
@@ -97,7 +129,8 @@ public:
 
     // Used by QML frontend to get the height of a single chunk of the spectrogram for chunk display.
     // TODO: Make this a Q_PROPERTY -> that way it can automatically update/adjust when the chunk height changes.
-    Q_INVOKABLE int64_t spectrogramChunkHeight() const {
+    Q_INVOKABLE int64_t spectrogramChunkHeight() const
+    {
         int64_t chunk_width = this->spectrogramWidth();
         return this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
     }
@@ -111,6 +144,20 @@ public:
         int64_t rec_size = this->m_recording->size(1);
         int64_t chunkCount = rec_size / this->chunk_size + (rec_size % this->chunk_size != 0 ? 1 : 0);
         return chunkCount;
+    }
+
+    // Used by QML to get the total number of rows for the spectrogram view.
+    Q_INVOKABLE int64_t totalRows() const {
+        if (!m_recording)
+        {
+            // If no recording loaded, use 3 placeholders as the number of expected rows.
+            int64_t chunk_width = this->spectrogramWidth();
+            int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
+            return 3 * chunk_height;
+        }
+        const int64_t width = this->spectrogramWidth();
+        const int64_t samples = m_recording->size(1);
+        return samples / width + (samples % width != 0 ? 1 : 0); // ceiling division
     }
 
     // Called by QML. Queues the work onto the worker thread and returns immediately.

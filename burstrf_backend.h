@@ -12,11 +12,16 @@
 #include "spectrogram_builder.h"
 
 /*
- * * Migrate stateful values to Q_PROPERTIES to better sync frontend display.
- * * With this, we can establish an invariant for "no file" where these properties
- *   have default values, reducing chance for invalid state - default chunk_size, chunk_count, width, etc. etc.
- * * Do propper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.
+ * BurstRFBackend:
+ * This class has 3 main purposes:
+ * 1. Act as the interface between the backend logic for reading & processing data and the UI visualizations of that data.
+ * 2. Manage/orchestrate business logic of the lower level components (ie. lifecycle management; also includes maintaining invariants
+ *    for the application while its running).
+ * 3. Manage threading logic to keep the GUI thread lightweight and keep UI components up-to-date at a reasonable rate.
  *
+ * TODO:
+ * * Establish invariants for BurstRFbackend for UI stability.
+ * * Do propper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.
  */
 
 class BurstRFBackend : public QObject {

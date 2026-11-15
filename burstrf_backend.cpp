@@ -128,7 +128,6 @@ int64_t BurstRFBackend::spectrogramChunkHeight() const
 
 
 // Used by QML frontend to know how many spectrogram chunk objects to put in the scrollable window (flickable).
-// TODO: make this a Q_PROPERTY as well...
 int64_t BurstRFBackend::spectrogramChunkCount() const
 {
     if (!m_recording) return 3;

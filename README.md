@@ -12,6 +12,7 @@ This application is meant to be an MVP SigMF annotation editor.
 
 ---
 
+* should add most of the match on the tick marks to burstRF backend -  shouldn't be UI logic...
 * when adjusting window width, x-axis tick marks are squeezed to fit in the window - this means that they are no longer accurate...
 * fix file naming convention to match sigmf_io.
 * fix namespacing to the burstrf equivalent of sigmf_io.

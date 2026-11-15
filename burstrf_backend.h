@@ -21,7 +21,8 @@
  *      - NOTE: be wary of race conditions & logic w/respect to the pointers this class owns/handles... (recordings, threads, etc.)
  * TODO:
  * * Establish invariants for BurstRFbackend for UI stability.
- * * Do propper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.
+ * * Do proper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.
+ * * Update logic to remove queued chunks that have not yet been rendered and have already left the viewable range.
  */
 
 class BurstRFBackend : public QObject {

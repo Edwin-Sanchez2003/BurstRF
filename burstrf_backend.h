@@ -18,7 +18,7 @@
  * 2. Manage/orchestrate business logic of the lower level components (ie. lifecycle management; also includes maintaining invariants
  *    for the application while its running).
  * 3. Manage threading logic to keep the GUI thread lightweight and keep UI components up-to-date at a reasonable rate.
- *
+ *      - NOTE: be wary of race conditions & logic w/respect to the pointers this class owns/handles... (recordings, threads, etc.)
  * TODO:
  * * Establish invariants for BurstRFbackend for UI stability.
  * * Do propper clearing of state when a file is changed/switched - clear out UI, clear out recording, etc. etc.

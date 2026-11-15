@@ -592,8 +592,8 @@
         <mxCell id="0B-yw8StTgSzQq1HSVYh-2" parent="iQoSDTN4d9xYqPrcGlrY-16" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ bool saveAsPNG(const QImage&amp;amp; image, const QString&amp;amp; path)" vertex="1">
           <mxGeometry height="26" width="500" y="268" as="geometry" />
         </mxCell>
-        <mxCell id="7KcoJIgpBPN9h5AE4dO1-1" parent="0B-yw8StTgSzQq1HSVYh-7" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="Interfaces with signal data to build visual components (spectrograms) to be displayed by the frontend. BurstRFBackend handles usage of this object, mapping UI inputs to actions on SpectrogramBuilder." vertex="1">
-          <mxGeometry height="70" width="300" x="1330" y="94" as="geometry" />
+        <mxCell id="7KcoJIgpBPN9h5AE4dO1-1" parent="0B-yw8StTgSzQq1HSVYh-7" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="Interfaces with signal data to build visual components (spectrograms) to be displayed by the frontend. BurstRFBackend handles usage of this object, mapping UI inputs to actions on SpectrogramBuilder.&lt;div&gt;Coupled to:&lt;/div&gt;&lt;div&gt;- burstrf::Params&lt;/div&gt;&lt;div&gt;- sigmf_io::Recording&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="1270" y="50" as="geometry" />
         </mxCell>
         <mxCell id="0B-yw8StTgSzQq1HSVYh-13" parent="0B-yw8StTgSzQq1HSVYh-7" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Orientation : Enum" vertex="1">
           <mxGeometry height="78" width="160" x="490" y="179" as="geometry" />
@@ -681,6 +681,9 @@
         </mxCell>
         <mxCell id="0B-yw8StTgSzQq1HSVYh-71" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="A Qt subclass made simply to visualize a single spectrogram chunk. This gets placed within an Item in a flickable when the user scrolls such that this chunk would be visible on the screen." vertex="1">
           <mxGeometry height="70" width="320" x="1670" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="1Y5Xtaw29Kl_M4C53BZ9-1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Fix Spectrogram Builder &amp;amp; BurstRFBackend Coupling&lt;/h1&gt;&lt;p&gt;* BurstRFBackend uses a unique_ptr for the SpectrogramBuilder class.&lt;/p&gt;&lt;p&gt;* When a recording is loaded, a SpectrogramBuilder is built for the recording. If a previous one existed, the settings are copied over from the previous builder/recording pair into the new spectrogrambuilder as it is constructed.&lt;/p&gt;&lt;p&gt;* static functions on SpectrogramBuilder fill in the blanks when there is no recording loaded, giving output to populate visual items properly.&lt;/p&gt;&lt;p&gt;* SpectrogramBuilder handles core logic, coupled to a sigmf_io::Recording (const reference) and a params object. The Recording is the same recording for the lifetime of the SpectrogramObject (const shared_ptr&amp;nbsp; AND const reference).&lt;/p&gt;&lt;p&gt;* BurstRFBackend very lightly wraps the SpectrogramBuilder class, only handling the QML logic interface (ie. signals &amp;amp; Q_PROPERTIES) &amp;amp; threading to call functions on the spectrogram builder, and to create/destroy spectrogram builders as new recordings are loaded.&lt;/p&gt;" vertex="1">
+          <mxGeometry height="300" width="460" x="2100" y="1020" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -76,6 +76,7 @@ bool BurstRFBackend::loadFile(const QUrl &url)
     m_recording = std::move(rec);
 
     // TEMP: immediately calculate db scale at initial load
+    // NOTE: move logic to function in SpectrogramBuilder! declarative over imperative...
     int64_t channel = 1;
     int64_t available = m_recording->size(channel);
     int64_t toRead = std::min(this->chunk_size, available);
@@ -102,6 +103,7 @@ QString BurstRFBackend::currentFileDescriptor() const
 
 
 // functions to get needed information for the Frequency Axis
+// NOTE: move to SpectrogramBuilder? prob not, wait for now...
 double BurstRFBackend::getCenterFrequencyHz() const
 {
     if(!m_recording) return 0.0;
@@ -112,6 +114,7 @@ double BurstRFBackend::getCenterFrequencyHz() const
 }
 
 // functions to get needed information for the Frequency Axis
+// NOTE: move to spectrogramBuilder? prob not...
 double BurstRFBackend::getSampleRateSps() const
 {
     if(!m_recording) return 1.0;
@@ -122,6 +125,7 @@ double BurstRFBackend::getSampleRateSps() const
 }
 
 
+// NOTE: move chunk_size & height to SpectrogramBuilder?
 int64_t BurstRFBackend::spectrogramChunkHeight() const
 {
     return burstrf::ceilDiv<int64_t>(this->chunk_size, this->spectrogramWidth());
@@ -130,6 +134,7 @@ int64_t BurstRFBackend::spectrogramChunkHeight() const
 
 // Used by QML frontend to know how many spectrogram chunk objects to put in the scrollable window (flickable).
 // TODO: handle channels & invariants properly!
+// NOTE: should be on SpectrogramBuilder class?
 int64_t BurstRFBackend::spectrogramChunkCount() const
 {
     if (!m_recording) return 3;
@@ -140,6 +145,7 @@ int64_t BurstRFBackend::spectrogramChunkCount() const
 // Used by QML to get the total number of rows for the spectrogram view.
 // TODO: handle channels & invariants properly!!!
 // NOTE: when spectrogram uses noverlap, this logic will need to be updated...
+// NOTE: should be on spectrogram builder class?
 int64_t BurstRFBackend::totalRows() const
 {
     // If no recording loaded, use 3 placeholders' worth of expected rows.
@@ -159,6 +165,7 @@ void BurstRFBackend::generateChunk(int64_t chunk_index)
 
 
 // Builds a placeholder chunk for when there's no recording.
+// NOTE: should be on SpectrogramBuilder class?
 QImage BurstRFBackend::generatePlaceholder(int chunkW, int chunkH) const
 {
     QImage img(chunkW, chunkH, QImage::Format_RGB32);
@@ -204,6 +211,7 @@ QImage BurstRFBackend::generatePlaceholder(int chunkW, int chunkH) const
 
 
 // Runs on the worker thread. Returns the chunk image (or a placeholder).
+// Core logic should entirely exist in SpectrogramBuilder, not here...
 QImage BurstRFBackend::buildChunk(int64_t chunk_index) const
 {
     // If no recording, generate a placeholder the size of the expected chunk.

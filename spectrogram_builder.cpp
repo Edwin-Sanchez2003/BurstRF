@@ -30,7 +30,7 @@ SpectrogramBuilder::SpectrogramBuilder(Params params)
 // NOTE: Need to break this down into helper functions, then pull out the logic to find ceil & floor db.
 //       This way we can make it a side boolean switch to decide if we want to re-calculate the floor/ceil db values
 //       during computation? Not sure... need to think about how user can adjust setting on-the-fly...
-QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples)
+QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<double>>& samples) const
 {
     // Calculate output image dimensions -> nperseg (width) x rows (height)
     // rows = samples.size() / nperseg (ceiling division so sample values are not missed).

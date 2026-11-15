@@ -52,7 +52,7 @@ public:
     void setParams(Params params) { this->params_ = params; }
 
     // generates a spectrogram using the configured member variables.
-    QImage generateSpectrogram(const std::vector<std::complex<double>>& samples);
+    QImage generateSpectrogram(const std::vector<std::complex<double>>& samples) const;
 
     // Compute initial db scale values, so that spectrogram color scaling works visually.
     // NOTE: This should end up a function on Params...

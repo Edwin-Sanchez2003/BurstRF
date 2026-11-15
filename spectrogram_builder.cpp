@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdexcept>
 #include "colormaps.h"
+#include "tools.h"
 
 
 namespace burstrf {
@@ -35,7 +36,7 @@ QImage SpectrogramBuilder::generateSpectrogram(const std::vector<std::complex<do
     // Calculate output image dimensions -> nperseg (width) x rows (height)
     // rows = samples.size() / nperseg (ceiling division so sample values are not missed).
     const size_t width = this->params_.nperseg(); // also the column count
-    const size_t height = samples.size() / width + (samples.size() % width != 0 ? 1 : 0); // also the row count
+    const size_t height = burstrf::ceilDiv<size_t>(samples.size(), width);// also the row count
 
     // Build an Image Buffer with this size.
     QImage spectrogram(width, height, QImage::Format_RGB32);

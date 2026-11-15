@@ -107,7 +107,7 @@ ApplicationWindow {
         onAccepted: {
             if (backend.loadFile(selectedFile)) {
                 console.log("Successfully loaded: " + selectedFile)
-                fileDescriptorText.text = backend.currentFileDescriptor()
+                fileDescriptorText.text = backend.currentFileDescriptor
             } else {
                 console.log("Failed to load file!")
             }

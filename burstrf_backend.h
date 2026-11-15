@@ -44,7 +44,7 @@ public:
     // Called by QML. Queues the work onto the worker thread and returns immediately.
     Q_INVOKABLE void generateChunk(int64_t chunk_index);
 
-    // QML-callable function to get the current recording's file anme.
+    // QML-callable function to get the current recording's file name & other details.
     QString currentFileDescriptor() const;
 
     // functions to get needed information for the Frequency Axis

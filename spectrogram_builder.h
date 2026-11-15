@@ -79,6 +79,8 @@ private:
     Params params_;
 };
 
+
+
 } // end burstrf namespace
 
 #endif // BURSTRF_SPECTROGRAMBUILDER_H

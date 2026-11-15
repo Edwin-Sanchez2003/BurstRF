@@ -19,6 +19,7 @@
 
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
+#include "tools.h"
 
 
 BurstRFBackend::BurstRFBackend(QObject* parent)
@@ -52,6 +53,7 @@ BurstRFBackend::BurstRFBackend(QObject* parent)
 
     m_thread.start();
 }
+
 
 BurstRFBackend::~BurstRFBackend()
 {
@@ -122,35 +124,29 @@ double BurstRFBackend::getSampleRateSps() const
 
 int64_t BurstRFBackend::spectrogramChunkHeight() const
 {
-    int64_t chunk_width = this->spectrogramWidth();
-    return this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
+    return burstrf::ceilDiv<int64_t>(this->chunk_size, this->spectrogramWidth());
 }
 
 
 // Used by QML frontend to know how many spectrogram chunk objects to put in the scrollable window (flickable).
+// TODO: handle channels & invariants properly!
 int64_t BurstRFBackend::spectrogramChunkCount() const
 {
     if (!m_recording) return 3;
-
-    int64_t rec_size = this->m_recording->size(1);
-    int64_t chunkCount = rec_size / this->chunk_size + (rec_size % this->chunk_size != 0 ? 1 : 0);
-    return chunkCount;
+    return burstrf::ceilDiv<int64_t>(this->m_recording->size(1), this->chunk_size);
 }
 
 
 // Used by QML to get the total number of rows for the spectrogram view.
+// TODO: handle channels & invariants properly!!!
+// NOTE: when spectrogram uses noverlap, this logic will need to be updated...
 int64_t BurstRFBackend::totalRows() const
 {
+    // If no recording loaded, use 3 placeholders' worth of expected rows.
     if (!m_recording)
-    {
-        // If no recording loaded, use 3 placeholders as the number of expected rows.
-        int64_t chunk_width = this->spectrogramWidth();
-        int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
-        return 3 * chunk_height;
-    }
-    const int64_t width = this->spectrogramWidth();
-    const int64_t samples = m_recording->size(1);
-    return samples / width + (samples % width != 0 ? 1 : 0); // ceiling division
+        return 3 * spectrogramChunkHeight();
+
+    return burstrf::ceilDiv<int64_t>(this->m_recording->size(1), this->spectrogramWidth());
 }
 
 
@@ -210,13 +206,9 @@ QImage BurstRFBackend::generatePlaceholder(int chunkW, int chunkH) const
 // Runs on the worker thread. Returns the chunk image (or a placeholder).
 QImage BurstRFBackend::buildChunk(int64_t chunk_index) const
 {
-    // If no recording loaded, generate a placeholder the size of the expected chunk.
-    int64_t chunk_width = this->spectrogramWidth();
-    int64_t chunk_height = this->chunk_size / chunk_width + (this->chunk_size % chunk_width != 0 ? 1 : 0);
-
-    // If no recording, return placeholder
+    // If no recording, generate a placeholder the size of the expected chunk.
     if (!m_recording)
-        return generatePlaceholder(this->spectrogramWidth(), chunk_height);
+        return generatePlaceholder(this->spectrogramWidth(), spectrogramChunkHeight());
 
     // convert the chunk_index to a sample_start, based on the chunk_size
     int64_t sample_start = this->chunk_size * chunk_index;
@@ -224,7 +216,7 @@ QImage BurstRFBackend::buildChunk(int64_t chunk_index) const
     int64_t channel = 1;
     int64_t available = m_recording->size(channel) - sample_start;
     if (available <= 0)
-        return generatePlaceholder(chunk_width, chunk_height); // past EOF
+        return generatePlaceholder(this->spectrogramWidth(), spectrogramChunkHeight()); // past EOF
 
     int64_t toRead = std::min(this->chunk_size, available);
 

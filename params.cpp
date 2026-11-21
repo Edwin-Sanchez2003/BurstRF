@@ -6,6 +6,14 @@
 
 namespace burstrf {
 
+std::expected<void, std::string> Params::set_chunk_size(size_t chunk_size)
+{
+    // TODO: decide what rules to apply to chunk_size... should be a larger number?
+    if(chunk_size < nperseg)
+        return std::unexpected(
+            "chunk_size should be at least the same size as the a single fft (nperseg). chunk_size: " + std::to_string(chunk_size)
+            + ", nperseg: " + std::to_string(this->nperseg_));
+}
 
 std::expected<void, std::string> Params::set_nperseg(size_t nperseg)
 {

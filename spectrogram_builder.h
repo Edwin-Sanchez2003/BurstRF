@@ -7,8 +7,11 @@
 #include <vector>
 #include <complex>
 #include <QImage>
-#include "params.h"
+#include <memory>
+#include <utility>
 
+#include <sigmf_io/recording.h>
+#include "params.h"
 /*
  * SpectrogramBuilder
  *
@@ -45,14 +48,19 @@ public:
 public:
     // TODO: write constructors with the major members defined, and use SpectrogramBuilder::Params implicitly.
     // Catch-all constructor that just takes in a SpectrogramBuilder::Params struct.
-    SpectrogramBuilder();
-    explicit SpectrogramBuilder(Params params);
+    SpectrogramBuilder(); // no recording -> default placeholder spectrogram.
+    explicit SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording);
+    SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording, Params params);
 
-    Params getParams() const { return this->params_; }
+    std::shared_ptr<sigmf_io::Recording> recording() const { return this->recording_; }
+    void setRecording(std::shared_ptr<sigmf_io::Recording> recording);
+    void clearRecording(); // sets the recording member to a null ptr.
+
+    Params params() const { return this->params_; }
     void setParams(Params params) { this->params_ = params; }
 
     // generates a spectrogram using the configured member variables.
-    QImage generateSpectrogram(const std::vector<std::complex<double>>& samples) const;
+    QImage generateSpectrogram(const size_t index) const;
 
     // Compute initial db scale values, so that spectrogram color scaling works visually.
     // NOTE: This should end up a function on Params...
@@ -61,12 +69,11 @@ public:
     // TODO: should set this->params_.floor_db, this->params_.ceil_db values.
     // NOTE: Currently integrated with generateSpectrogram - a tightly coupled step with the algorithm currently...
     //       Will need to untangle later...
-    void computeSetDbScale(const std::vector<std::complex<double>>& samples);
+    // TODO: split into 2 functions: computeDbScale, set dB scale? So if user manually types in values...
+    //      There's a dual use-case this isn't set up for just yet...
+    void computeSetDbScale();
 
     int64_t width() const { return this->params_.nperseg(); }
-
-    // gets the corresponding color given a dB value
-    QRgb colormap(double db) const;
 
     // Helper to identify what frequency a certain image index corresponds to.
     // NOTE: depending on scaling in actual viewer, may not be accurate...
@@ -76,6 +83,19 @@ public:
     bool saveAsPNG(const QImage& image, const QString& path);
 
 private:
+    // returns sample_start, sample_count based on the set parameters.
+    std::pair<size_t, size_t> indexToChunk(const size_t index) const;
+
+    // TODO: couple with spectrogram builder so we can have a consistent size with a current recording when waiting for a
+    // chunk to load. Should still allow for it to be called w/out a Recording object, as we need to set placeholders for "no file"
+    // scenario.
+    QImage generatePlaceholder() const;
+
+    // gets the corresponding color given a dB value
+    QRgb colormap(double db) const;
+
+private:
+    std::shared_ptr<sigmf_io::Recording> recording_;
     Params params_;
 };
 

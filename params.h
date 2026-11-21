@@ -25,11 +25,12 @@ public:
     Params() {} // defaults are valid values.
 
     // getters -> should always return a valid value (setters/contructor do not allow invalid values).
-    size_t nperseg()  const { return this->nperseg_; }
-    size_t noverlap() const { return this->noverlap_; }
-    size_t nfft()     const { return this->nfft_; }
-    double epsilon()  const { return this->epsilon_; }
-    size_t hop()      const { return this->nperseg() - this->noverlap(); } // how far to slide the window
+    size_t chunk_size() const { return this->chunk_size_; }
+    size_t nperseg()    const { return this->nperseg_; }
+    size_t noverlap()   const { return this->noverlap_; }
+    size_t nfft()       const { return this->nfft_; }
+    double epsilon()    const { return this->epsilon_; }
+    size_t hop()        const { return this->nperseg() - this->noverlap(); } // how far to slide the window
 
     bool auto_range = true; // if true, floor/ceil are computed from the data.
     double floor_db() const { return this->floor_db_; }
@@ -47,6 +48,7 @@ public:
     size_t bin_reduction_factor() const { return this->bin_reduction_factor_; }
     BinReductionMode bin_reduction_mode = BinReductionMode::NONE; // whether or not to compress bins for better visualization.
 
+    std::expected<void, std::string> set_chunk_size(size_t chunk_size);
     std::expected<void, std::string> set_nperseg(size_t nperseg);
     std::expected<void, std::string> set_noverlap(size_t noverlap);
     std::expected<void, std::string> set_nfft(size_t nfft);
@@ -67,6 +69,7 @@ public:
     // void normalize_values();
 
 private:
+    size_t chunk_size_ = 600'000;            // number of samples to use to compute a single chunk of a spectrogram.
     size_t nperseg_ = 1024;   // Number of samples that get processed per FFT computation.
     size_t noverlap_ = 512;   // Number of samples to overlap each FFT computation. (unset -> nperseg / 2)
     size_t nfft_ = 1024;      // Size of FFT if zero-padding is desired, otherwise same as nperseg. (unset -> nperseg)

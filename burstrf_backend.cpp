@@ -16,6 +16,7 @@
 #include <complex>
 #include <cmath>
 #include <optional>
+#include <memory>
 
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
@@ -70,11 +71,8 @@ bool BurstRFBackend::loadFile(const QUrl &url)
         return false;
     }
 
-    auto rec = std::make_unique<sigmf_io::Recording>(url.toLocalFile().toStdString());
-
+    this->m_recording = std::make_shared<sigmf_io::Recording>(url.toLocalFile().toStdString());
     // TODO: need to have channels be dynamic - hardcoded to 1 for now...
-    m_recording = std::move(rec);
-
     // TEMP: immediately calculate db scale at initial load
     // NOTE: move logic to function in SpectrogramBuilder! declarative over imperative...
     int64_t channel = 1;

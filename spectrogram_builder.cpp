@@ -9,6 +9,9 @@
 #include <complex>
 #include <vector>
 #include <stdexcept>
+#include <memory>
+#include <utility>
+
 #include "colormaps.h"
 #include "tools.h"
 
@@ -16,15 +19,38 @@
 namespace burstrf {
 
 
-SpectrogramBuilder::SpectrogramBuilder()
-    : params_(Params())
-{}
+SpectrogramBuilder::SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording)
+    : recording_(std::move(recording))
+{
+    // TODO: pick dBscale values!!!
+
+}
 
 
-SpectrogramBuilder::SpectrogramBuilder(Params params)
-    : params_(params)
-{}
+SpectrogramBuilder::SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording, Params params)
+    : recording_(std::move(recording)),
+    params_(params)
+{
+    // TODO: pick dBscale values!!!
+}
 
+// returns sample_start, sample_count based on the set parameters.
+std::pair<size_t, size_t> SpectrogramBuilder::indexToChunk(const size_t index) const
+{
+    // If no recording, generate a placeholder the size of the expected chunk.
+    if (!recording_)
+        return generatePlaceholder(this->spectrogramWidth(), spectrogramChunkHeight());
+
+    // convert the chunk_index to a sample_start, based on the chunk_size
+    int64_t sample_start = this->chunk_size * chunk_index;
+
+    int64_t channel = 1;
+    int64_t available = m_recording->size(channel) - sample_start;
+    if (available <= 0)
+        return generatePlaceholder(this->spectrogramWidth(), spectrogramChunkHeight()); // past EOF
+
+    int64_t toRead = std::min(this->chunk_size, available);
+}
 
 // NOTE: What are valid return values? Empty Image? etc...
 // TODO: integrate other Param values: noverlap, nfft, etc...

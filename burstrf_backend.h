@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QAtomicInt>
 #include <QString>
+#include <memory>
 
 #include <sigmf_io/recording.h>
 #include "spectrogram_builder.h"
@@ -72,11 +73,6 @@ private:
     // Runs on the worker thread. Returns the chunk image (or a placeholder).
     QImage buildChunk(int64_t chunk_index) const;
 
-    // TODO: couple with spectrogram builder so we can have a consistent size with a current recording when waiting for a
-    // chunk to load. Should still allow for it to be called w/out a Recording object, as we need to set placeholders for "no file"
-    // scenario.
-    QImage generatePlaceholder(int chunkW, int chunkH) const;
-
 signals:
     // Core Logic Signals - initiate data loading interactions with the UI and other components.
     void recordingLoaded();
@@ -93,9 +89,8 @@ signals:
     void totalRowsChanged();
 
 private:
-    int64_t chunk_size = 600'000;
-    std::unique_ptr<sigmf_io::Recording> m_recording;
-    burstrf::SpectrogramBuilder spectrogram_builder;
+    std::shared_ptr<sigmf_io::Recording> m_recording; // NOTE: shared_ptr -> need to keep track of who keeps it alive!!!
+    std::shared_ptr<burstrf::SpectrogramBuilder> spectrogram_builder;
 
     QThread m_thread;        // the single worker thread
     QObject m_worker;        // lives on m_thread; receives requestChunk

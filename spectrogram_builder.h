@@ -9,6 +9,7 @@
 #include <QImage>
 #include <memory>
 #include <utility>
+#include <optional>
 
 #include <sigmf_io/recording.h>
 #include "params.h"
@@ -44,59 +45,51 @@ namespace burstrf {
 class SpectrogramBuilder
 {
 public:
-
-public:
     // TODO: write constructors with the major members defined, and use SpectrogramBuilder::Params implicitly.
     // Catch-all constructor that just takes in a SpectrogramBuilder::Params struct.
     SpectrogramBuilder(); // no recording -> default placeholder spectrogram.
-    explicit SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording);
-    SpectrogramBuilder(std::shared_ptr<sigmf_io::Recording> recording, Params params);
+    explicit SpectrogramBuilder(std::shared_ptr<const sigmf_io::Recording> recording);
+    SpectrogramBuilder(std::shared_ptr<const sigmf_io::Recording> recording, Params params);
 
-    std::shared_ptr<sigmf_io::Recording> recording() const { return this->recording_; }
-    void setRecording(std::shared_ptr<sigmf_io::Recording> recording);
+    void setRecording(std::shared_ptr<const sigmf_io::Recording> recording);
     void clearRecording(); // sets the recording member to a null ptr.
 
-    Params params() const { return this->params_; }
+    const Params& params() const { return this->params_; }
     void setParams(Params params) { this->params_ = params; }
 
+    // the number of spectrogram chunks.
+    size_t chunkCount() const;
+
+    // the number of spectrogram rows for the entire file.
+    size_t rowCount() const;
+
     // generates a spectrogram using the configured member variables.
-    QImage generateSpectrogram(const size_t index) const;
+    QImage generateSpectrogramChunk(const size_t chunk_index) const;
 
     // Compute initial db scale values, so that spectrogram color scaling works visually.
-    // NOTE: This should end up a function on Params...
-    // NOTE: Should make another version that is given sample indices, so we can calculate
-    // across multiple chunks of a file without reading the whole file into memory...
-    // TODO: should set this->params_.floor_db, this->params_.ceil_db values.
-    // NOTE: Currently integrated with generateSpectrogram - a tightly coupled step with the algorithm currently...
-    //       Will need to untangle later...
-    // TODO: split into 2 functions: computeDbScale, set dB scale? So if user manually types in values...
-    //      There's a dual use-case this isn't set up for just yet...
     void computeSetDbScale();
-
-    int64_t width() const { return this->params_.nperseg(); }
 
     // Helper to identify what frequency a certain image index corresponds to.
     // NOTE: depending on scaling in actual viewer, may not be accurate...
-    double binIndexToFrequencyCenter(const unsigned int bin_index, const double sample_rate);
+    double binIndexToFrequencyCenter(const unsigned int bin_index, const double sample_rate) const;
 
     // helper function to save the spectrogram for independent evaluation.
     bool saveAsPNG(const QImage& image, const QString& path);
 
 private:
     // returns sample_start, sample_count based on the set parameters.
-    std::pair<size_t, size_t> indexToChunk(const size_t index) const;
+    std::optional<std::pair<size_t, size_t>> chunkIndexToSampleBounds(const size_t chunk_index) const;
 
-    // TODO: couple with spectrogram builder so we can have a consistent size with a current recording when waiting for a
-    // chunk to load. Should still allow for it to be called w/out a Recording object, as we need to set placeholders for "no file"
-    // scenario.
+    // helper function to generate a placeholder spectrogram chunk when there's no recording.
     QImage generatePlaceholder() const;
 
     // gets the corresponding color given a dB value
     QRgb colormap(double db) const;
 
 private:
-    std::shared_ptr<sigmf_io::Recording> recording_;
+    std::shared_ptr<const sigmf_io::Recording> recording_;
     Params params_;
+    static constexpr size_t DEFAULT_CHUNK_COUNT = 3;
 };
 
 

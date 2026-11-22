@@ -6,6 +6,8 @@
 #include <optional>
 #include <cmath>
 
+#include "tools.h"
+
 namespace burstrf {
 
 // Whether the output spectrogram should be a horizontal scroll or vertical scroll.
@@ -31,6 +33,11 @@ public:
     size_t nfft()       const { return this->nfft_; }
     double epsilon()    const { return this->epsilon_; }
     size_t hop()        const { return this->nperseg() - this->noverlap(); } // how far to slide the window
+
+    // how many pixels wide the spectrogram visual will be. currently nperseg.
+    size_t spectrogram_chunk_width() const { return this->nperseg_; }
+    // how many pixels tall the spectrogram visual will be. chunk_size (sample count) divided by the width of the spectrogram.
+    size_t spectrogram_chunk_height() const { return burstrf::ceilDiv<size_t>(this->chunk_size_, this->spectrogram_chunk_width()); }
 
     bool auto_range = true; // if true, floor/ceil are computed from the data.
     double floor_db() const { return this->floor_db_; }

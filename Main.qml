@@ -29,7 +29,7 @@ ApplicationWindow {
     color: bgWindow
 
     property int spectroWidth: root.spectroWidth
-                               = backend.spectrogramWidth // or whatever the backend exposes
+                               = backend.spectrogramChunkWidth // or whatever the backend exposes
 
     property real sampleRateSps: 0
 
@@ -156,7 +156,8 @@ ApplicationWindow {
                     id: chunk
                     readonly property int fullHeight: backend.spectrogramChunkHeight
                     // rows before this chunk = index * fullHeight
-                    readonly property int rowsRemaining: backend.totalRows - index * fullHeight
+                    readonly property int rowsRemaining: backend.spectrogramRowCount
+                                                         - index * fullHeight
                     implicitWidth: root.spectroWidth
                     implicitHeight: Math.min(fullHeight, rowsRemaining)
                     width: implicitWidth

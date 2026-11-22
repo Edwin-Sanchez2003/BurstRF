@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <memory>
+
 #include "burstrf_backend.h"
 #include "spectrogram_builder.h"
 
@@ -34,9 +36,9 @@ void test_spectrogram()
 {
     burstrf::SpectrogramBuilder spec_builder;
 
-    sigmf_io::Recording recording = sigmf_io::Recording("trimmedSamples(2).sigmf-meta");
-    std::vector<std::complex<double>> samples = recording.get_samples<std::complex<double>>(0, 1000000);
+    std::shared_ptr<sigmf_io::Recording> recording = std::make_shared<sigmf_io::Recording>("trimmedSamples(2).sigmf-meta");
+    spec_builder.setRecording(recording);
 
-    QImage spectrogram = spec_builder.generateSpectrogram(samples);
+    QImage spectrogram = spec_builder.generateSpectrogramChunk(0);
     spec_builder.saveAsPNG(spectrogram, QString("trimmedSamples(2)_auto_0__1_000_000.png"));
 }

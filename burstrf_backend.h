@@ -32,10 +32,10 @@ class BurstRFBackend : public QObject {
     Q_PROPERTY(QString currentFileDescriptor READ currentFileDescriptor NOTIFY currentFileDescriptorChanged)
     Q_PROPERTY(double getCenterFrequencyHz READ getCenterFrequencyHz NOTIFY getCenterFrequencyHzChanged)
     Q_PROPERTY(double getSampleRateSps READ getSampleRateSps NOTIFY getSampleRateSpsChanged)
-    Q_PROPERTY(int64_t spectrogramWidth READ spectrogramWidth NOTIFY spectrogramWidthChanged)
-    Q_PROPERTY(int64_t spectrogramChunkHeight READ spectrogramChunkHeight NOTIFY spectrogramChunkHeightChanged)
-    Q_PROPERTY(int64_t spectrogramChunkCount READ spectrogramChunkCount NOTIFY spectrogramChunkCountChanged)
-    Q_PROPERTY(int64_t totalRows READ totalRows NOTIFY totalRowsChanged)
+    Q_PROPERTY(size_t spectrogramChunkWidth READ spectrogramChunkWidth NOTIFY spectrogramChunkWidthChanged)
+    Q_PROPERTY(size_t spectrogramChunkHeight READ spectrogramChunkHeight NOTIFY spectrogramChunkHeightChanged)
+    Q_PROPERTY(size_t spectrogramChunkCount READ spectrogramChunkCount NOTIFY spectrogramChunkCountChanged)
+    Q_PROPERTY(size_t spectrogramRowCount READ spectrogramRowCount NOTIFY spectrogramRowCountChanged)
 public:
     explicit BurstRFBackend(QObject* parent = nullptr);
     ~BurstRFBackend() override;
@@ -56,22 +56,18 @@ public:
     double getSampleRateSps() const;
 
     // so display knows how wide to set the flickable.
-    int64_t spectrogramWidth() const { return this->spectrogram_builder.width(); }
+    size_t spectrogramChunkWidth() const { return this->spectrogram_builder.params().spectrogram_chunk_width(); }
 
     // Used by QML frontend to get the height of a single chunk of the spectrogram for chunk display.
     // TODO: Make this a Q_PROPERTY -> that way it can automatically update/adjust when the chunk height changes.
-    int64_t spectrogramChunkHeight() const;
+    size_t spectrogramChunkHeight() const;
 
     // Used by QML frontend to know how many spectrogram chunk objects to put in the scrollable window (flickable).
     // TODO: make this a Q_PROPERTY as well...
-    int64_t spectrogramChunkCount() const;
+    size_t spectrogramChunkCount() const;
 
     // Used by QML to get the total number of rows for the spectrogram view.
-    Q_INVOKABLE int64_t totalRows() const;
-
-private:
-    // Runs on the worker thread. Returns the chunk image (or a placeholder).
-    QImage buildChunk(int64_t chunk_index) const;
+    size_t spectrogramRowCount() const;
 
 signals:
     // Core Logic Signals - initiate data loading interactions with the UI and other components.
@@ -83,14 +79,14 @@ signals:
     void currentFileDescriptorChanged();
     void getCenterFrequencyHzChanged();
     void getSampleRateSpsChanged();
-    void spectrogramWidthChanged();
+    void spectrogramChunkWidthChanged();
     void spectrogramChunkHeightChanged();
     void spectrogramChunkCountChanged();
-    void totalRowsChanged();
+    void spectrogramRowCountChanged();
 
 private:
     std::shared_ptr<sigmf_io::Recording> m_recording; // NOTE: shared_ptr -> need to keep track of who keeps it alive!!!
-    std::shared_ptr<burstrf::SpectrogramBuilder> spectrogram_builder;
+    burstrf::SpectrogramBuilder spectrogram_builder;
 
     QThread m_thread;        // the single worker thread
     QObject m_worker;        // lives on m_thread; receives requestChunk

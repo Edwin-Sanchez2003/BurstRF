@@ -50,23 +50,25 @@ FetchContent_MakeAvailable(kissfft)
 # ─────────────────────────────────────────────────────────────────────────────
 
 qt_add_executable(appBurstRF
-    main.cpp
+    ./src/main.cpp
 )
 
 qt_add_qml_module(appBurstRF
     URI BurstRF
     QML_FILES
-            Main.qml
-            FrequencyAxis.qml
-            TimeAxis.qml
-    QML_FILES
-        SOURCES burstrf_backend.h
-        SOURCES spectrogram_builder.h spectrogram_builder.cpp
-        SOURCES colormaps.h
-        SOURCES params.h params.cpp
-        SOURCES spectrogram_item.h
-        SOURCES burstrf_backend.cpp
-        SOURCES tools.h
+        ./qml/Main.qml
+        ./qml/components/FrequencyAxis.qml
+        ./qml/components/TimeAxis.qml
+    SOURCES
+        ./include/burstrf_backend.h
+        ./include/spectrogram_builder.h
+        ./include/params.h
+        ./include/spectrogram_item.h
+        ./include/colormaps.h
+        ./include/tools.h
+        ./src/burstrf_backend.cpp
+        ./src/spectrogram_builder.cpp
+        ./src/params.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -89,6 +91,7 @@ target_link_libraries(appBurstRF
 # libsigmf generates headers into the build tree; this makes them findable
 target_include_directories(appBurstRF
     PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_BINARY_DIR}/include
 )
 

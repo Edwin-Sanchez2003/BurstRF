@@ -1,4 +1,4 @@
-#include "spectrogram_builder.h"
+#include "./include/spectrogram_builder.h"
 
 #include <QImage>
 #include <QDebug>
@@ -13,8 +13,8 @@
 #include <utility>
 #include <optional>
 
-#include "colormaps.h"
-#include "tools.h"
+#include "./include/colormaps.h"
+#include "./include/tools.h"
 
 
 namespace burstrf {

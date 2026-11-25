@@ -3,8 +3,8 @@
 #include <QQmlContext>
 #include <memory>
 
-#include "burstrf_backend.h"
-#include "spectrogram_builder.h"
+#include "./include/burstrf_backend.h"
+#include "./include/spectrogram_builder.h"
 
 void test_spectrogram();
 

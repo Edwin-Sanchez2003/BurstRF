@@ -363,7 +363,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="P083uSk-mxDBpn68XPff" name="Current Implementation UML">
-    <mxGraphModel dx="1768" dy="1668" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2223" dy="2035" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -717,6 +717,57 @@
         </mxCell>
         <mxCell id="0B-yw8StTgSzQq1HSVYh-71" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=top;rounded=0;" value="A Qt subclass made simply to visualize a single spectrogram chunk. This gets placed within an Item in a flickable when the user scrolls such that this chunk would be visible on the screen." vertex="1">
           <mxGeometry height="70" width="320" x="1670" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Main.qml" vertex="1">
+          <mxGeometry height="860" width="660" x="1530" y="-940" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-3" parent="IbQIpQI-mb5Ixj6d9StP-1" style="swimlane;whiteSpace=wrap;html=1;" value="ApplicationWindow" vertex="1">
+          <mxGeometry height="800" width="600" x="30" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-6" parent="IbQIpQI-mb5Ixj6d9StP-3" style="rounded=0;whiteSpace=wrap;html=1;" value="Text&lt;div&gt;(fileDescriptorText)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-9" edge="1" parent="IbQIpQI-mb5Ixj6d9StP-3" source="IbQIpQI-mb5Ixj6d9StP-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="IbQIpQI-mb5Ixj6d9StP-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-7" parent="IbQIpQI-mb5Ixj6d9StP-3" style="rounded=0;whiteSpace=wrap;html=1;" value="Button&lt;div&gt;(pickFile)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="10" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-8" parent="IbQIpQI-mb5Ixj6d9StP-3" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" value="FileDialog&lt;div&gt;(fileDialog)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="170" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-11" parent="IbQIpQI-mb5Ixj6d9StP-3" style="rounded=0;whiteSpace=wrap;html=1;" value="Rectangle&lt;div&gt;(spectroFrame)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="122" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-12" parent="IbQIpQI-mb5Ixj6d9StP-3" style="swimlane;whiteSpace=wrap;html=1;" value="Flickable (flick)" vertex="1">
+          <mxGeometry height="495" width="350" x="120" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-13" parent="IbQIpQI-mb5Ixj6d9StP-12" style="swimlane;whiteSpace=wrap;html=1;" value="Column (column)" vertex="1">
+          <mxGeometry height="450" width="330" x="10" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-14" parent="IbQIpQI-mb5Ixj6d9StP-13" style="swimlane;whiteSpace=wrap;html=1;" value="Repeater (specChunkRepeater)" vertex="1">
+          <mxGeometry height="410" width="310" x="10" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-15" parent="IbQIpQI-mb5Ixj6d9StP-14" style="swimlane;whiteSpace=wrap;html=1;" value="Item (chunk)" vertex="1">
+          <mxGeometry height="120" width="290" x="10" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-16" parent="IbQIpQI-mb5Ixj6d9StP-15" style="rounded=0;whiteSpace=wrap;html=1;" value="SpectrogramItem&lt;div&gt;(spectrogram)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="85" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-17" parent="IbQIpQI-mb5Ixj6d9StP-14" style="swimlane;whiteSpace=wrap;html=1;" value="Item (chunk)" vertex="1">
+          <mxGeometry height="120" width="290" x="10" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-18" parent="IbQIpQI-mb5Ixj6d9StP-17" style="rounded=0;whiteSpace=wrap;html=1;" value="SpectrogramItem&lt;div&gt;(spectrogram)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="85" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-21" edge="1" parent="IbQIpQI-mb5Ixj6d9StP-14" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;defaultLabelBackgroundColor=page;labelPadding=0 4;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="IbQIpQI-mb5Ixj6d9StP-17" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="155" y="395" as="sourcePoint" />
+            <mxPoint x="160" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IbQIpQI-mb5Ixj6d9StP-2" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;UI Structure - Main Page&lt;/h1&gt;&lt;p&gt;A simple diagram showing the structure &amp;amp; components on the UI.&lt;/p&gt;" vertex="1">
+          <mxGeometry height="120" width="370" x="1510" y="-1070" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -110,7 +110,6 @@ ApplicationWindow {
     }
 
     readonly property int spectroBorderWidth: 5
-    readonly property color spectroBorder: "#8a7560"
 
     Rectangle {
         id: spectroFrame

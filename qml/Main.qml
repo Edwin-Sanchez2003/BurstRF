@@ -2,6 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 
+import BurstRF
+import BurstRF.Theme
+import "components"
+
 
 /*
   TODO: Make it so the spectrogram can handle zoom & pan, and make sure this doesn't effect the
@@ -17,16 +21,7 @@ ApplicationWindow {
     visible: true
     title: "BurstRF"
 
-    readonly property color bgWindow: "#1e2127"
-    readonly property color bgSpectro: "#111316"
-    readonly property color btnBg: "#2d333b"
-    readonly property color btnHover: "#3a4250"
-    readonly property color btnPressed: "#252a31"
-    readonly property color textPrimary: "#e6e9ef"
-    readonly property color textMuted: "#aeb7c4"
-    readonly property color accent: "#4c9ef0"
-
-    color: bgWindow
+    color: Theme.bgWindow
 
     property int spectroWidth: root.spectroWidth
                                = backend.spectrogramChunkWidth // or whatever the backend exposes
@@ -69,7 +64,7 @@ ApplicationWindow {
 
         contentItem: Text {
             text: pickFile.text
-            color: root.textPrimary
+            color: Theme.textPrimary
             font: pickFile.font
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -77,8 +72,8 @@ ApplicationWindow {
 
         background: Rectangle {
             radius: 4
-            color: pickFile.down ? root.btnPressed : pickFile.hovered ? root.btnHover : root.btnBg
-            border.color: pickFile.activeFocus ? root.accent : "transparent"
+            color: pickFile.down ? Theme.btnPressed : pickFile.hovered ? Theme.btnHover : Theme.btnBg
+            border.color: pickFile.activeFocus ? Theme.accent : "transparent"
             border.width: 1
         }
     }
@@ -94,7 +89,7 @@ ApplicationWindow {
         font.family: "Atkinson Hyperlegible"
         font.pointSize: 14
         font.weight: Font.Medium
-        color: root.textMuted
+        color: Theme.textMuted
         elide: Text.ElideMiddle // shortens long names in the middle rather than cutting them off
     }
 
@@ -123,8 +118,8 @@ ApplicationWindow {
         height: flick.height + 2 * root.spectroBorderWidth
         anchors.centerIn: flick
 
-        color: root.bgSpectro
-        border.color: root.spectroBorder
+        color: Theme.bgSpectro
+        border.color: Theme.spectroBorder
         border.width: root.spectroBorderWidth
     }
 
@@ -259,14 +254,14 @@ ApplicationWindow {
         background: Rectangle {
             implicitWidth: 12
             radius: 6
-            color: root.bgSpectro
+            color: Theme.bgSpectro
         }
 
         // Thumb: always drawn at full opacity, brighter while hovered or dragged
         contentItem: Rectangle {
             implicitWidth: 12
             radius: 6
-            color: vbar.pressed ? root.accent : vbar.hovered ? root.textMuted : root.btnHover
+            color: vbar.pressed ? Theme.accent : vbar.hovered ? Theme.textMuted : Theme.btnHover
         }
     }
 

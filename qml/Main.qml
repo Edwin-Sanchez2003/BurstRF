@@ -23,10 +23,10 @@ ApplicationWindow {
 
     color: Theme.bgWindow
 
-    property int spectroWidth: root.spectroWidth
-                               = backend.spectrogramChunkWidth // or whatever the backend exposes
+    property int spectroWidth: backend.spectrogramChunkWidth
 
     property real sampleRateSps: 0
+    property int loadGeneration: 0
 
     property int firstVisible: 0
     property int lastVisible: -1
@@ -175,6 +175,13 @@ ApplicationWindow {
                         }
                     }
 
+                    readonly property int reloadToken: root.loadGeneration
+                    onReloadTokenChanged: {
+                        requested = false
+                        spectrogram.clearImage()
+                        syncRequest()
+                    }
+
                     onInViewChanged: syncRequest()
                     Component.onCompleted: syncRequest()
 
@@ -267,13 +274,15 @@ ApplicationWindow {
     Connections {
         target: backend
         function onRecordingLoaded() {
-            specChunkRepeater.model = backend.spectrogramChunkCount
-            flick.contentY = 0
-            flick.returnToBounds()
-            root.updateVisibleRange()
             root.sampleRateSps = backend.getSampleRateSps
             freqAxis.centerHz = backend.getCenterFrequencyHz
             freqAxis.sampleRateSps = root.sampleRateSps
+
+            flick.contentY = 0
+            flick.returnToBounds()
+            root.updateVisibleRange()                       // compute the range first
+            specChunkRepeater.model = backend.spectrogramChunkCount
+            root.loadGeneration++                           // forces every chunk to re-request
         }
     }
 }

@@ -1,6 +1,9 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+# Don't track generated sigmf files
+/sigmf/
+
 # NEW: Added to ignore dependency source code (I don't want it tracked in my source code).
 # Build directory (covers FetchContent downloads)
 build/

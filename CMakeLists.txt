@@ -49,8 +49,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(kissfft)
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Re-enable warnings-as-errors globally for this project's source code.
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON CACHE BOOL "" FORCE)
+
 qt_add_executable(appBurstRF
-    ./src/main.cpp
+    src/main.cpp
 )
 
 qt_add_qml_module(appBurstRF
@@ -60,15 +63,19 @@ qt_add_qml_module(appBurstRF
         qml/components/FrequencyAxis.qml
         qml/components/TimeAxis.qml
     SOURCES
-        include/burstrf_backend.h
-        include/spectrogram_builder.h
-        include/params.h
-        include/spectrogram_item.h
-        include/colormaps.h
-        include/tools.h
-        src/burstrf_backend.cpp
-        src/spectrogram_builder.cpp
-        src/params.cpp
+        # Backend
+        include/backend/burstrf_backend.h
+        include/backend/spectrogram_builder.h
+        include/backend/params.h
+        include/backend/colormaps.h
+        include/backend/tools.h
+        src/backend/burstrf_backend.cpp
+        src/backend/spectrogram_builder.cpp
+        src/backend/params.cpp
+
+        # Frontend
+        include/frontend/spectrogram_item.h
+        # src/frontend/spectrogram_item.cpp   (add when it exists)
 )
 
 set_source_files_properties(qml/theme/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
@@ -79,6 +86,13 @@ qt_add_qml_module(BurstRFTheme
     QML_FILES
         qml/theme/Theme.qml
     NO_PLUGIN
+)
+
+target_include_directories(appBurstRF PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/backend
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/frontend
+    ${CMAKE_BINARY_DIR}/include
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -97,13 +111,6 @@ target_link_libraries(appBurstRF
             kissfft::kissfft-float  # kissfft for std::complex<float>
             sigmf_io::sigmf_io
             BurstRFTheme
-)
-
-# libsigmf generates headers into the build tree; this makes them findable
-target_include_directories(appBurstRF
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_BINARY_DIR}/include
 )
 
 include(GNUInstallDirs)

@@ -1,4 +1,4 @@
-#include "./include/spectrogram_builder.h"
+#include "backend/spectrogram_builder.h"
 
 #include <QImage>
 #include <QDebug>
@@ -14,8 +14,8 @@
 #include <optional>
 #include <tuple>  // for std::ignore
 
-#include "./include/colormaps.h"
-#include "./include/tools.h"
+#include "backend/colormaps.h"
+#include "backend/tools.h"
 
 
 namespace burstrf {

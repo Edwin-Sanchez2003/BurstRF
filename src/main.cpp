@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <memory>
 
-#include "./include/burstrf_backend.h"
+#include "backend/burstrf_backend.h"
 
 int main(int argc, char *argv[])
 {

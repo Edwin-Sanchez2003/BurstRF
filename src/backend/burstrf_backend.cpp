@@ -1,4 +1,4 @@
-#include "./include/burstrf_backend.h"
+#include "backend/burstrf_backend.h"
 
 #include <QObject>
 #include <QImage>
@@ -19,8 +19,8 @@
 #include <memory>
 
 #include <sigmf_io/recording.h>
-#include "./include/spectrogram_builder.h"
-#include "./include/tools.h"
+#include "backend/spectrogram_builder.h"
+#include "backend/tools.h"
 
 
 BurstRFBackend::BurstRFBackend(QObject* parent)

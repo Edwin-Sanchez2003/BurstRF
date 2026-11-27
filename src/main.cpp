@@ -4,9 +4,6 @@
 #include <memory>
 
 #include "./include/burstrf_backend.h"
-#include "./include/spectrogram_builder.h"
-
-void test_spectrogram();
 
 int main(int argc, char *argv[])
 {
@@ -29,16 +26,4 @@ int main(int argc, char *argv[])
     engine.loadFromModule("BurstRF", "Main");
 
     return app.exec();
-}
-
-
-void test_spectrogram()
-{
-    burstrf::SpectrogramBuilder spec_builder;
-
-    std::shared_ptr<sigmf_io::Recording> recording = std::make_shared<sigmf_io::Recording>("trimmedSamples(2).sigmf-meta");
-    spec_builder.setRecording(recording);
-
-    QImage spectrogram = spec_builder.generateSpectrogramChunk(0);
-    spec_builder.saveAsPNG(spectrogram, QString("trimmedSamples(2)_auto_0__1_000_000.png"));
 }

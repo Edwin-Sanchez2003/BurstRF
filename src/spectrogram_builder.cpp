@@ -12,6 +12,7 @@
 #include <memory>
 #include <utility>
 #include <optional>
+#include <tuple>  // for std::ignore
 
 #include "./include/colormaps.h"
 #include "./include/tools.h"
@@ -242,8 +243,8 @@ void SpectrogramBuilder::computeSetDbScale()
         return db_values[k];
     };
 
-    this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());
-    this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());
+    std::ignore = this->params_.set_floor_db(percentile(this->params_.floor_percentile()) - this->params_.floor_margin_db());
+    std::ignore = this->params_.set_ceil_db(percentile(this->params_.ceil_percentile()) + this->params_.ceil_margin_db());
 }
 
 
